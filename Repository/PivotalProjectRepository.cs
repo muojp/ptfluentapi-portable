@@ -117,8 +117,7 @@ namespace PivotalTracker.FluentAPI.Repository
         }
 
         public Project CreateProject(Repository.PivotalProjectRepository.ProjectXmlRequest projectRequest)
-        {
-            //TODO: do not work. Debug me, i'm famous
+       {
             var path = string.Format("/projects");
   
 
