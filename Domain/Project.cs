@@ -31,7 +31,8 @@ namespace PivotalTracker.FluentAPI.Domain
         public bool UseHTTPS { get; set; }
         public bool IsBugAndChoresEstimables { get; set; }
         public bool IsCommitModeActive { get; set; }
-        public DateTimeUTC LastActivityDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime LastActivityDate { get; set; }
         public IList<Integration> Integrations { get; private set; }
         public IList<Membership> Memberships { get; private set; }
     }

@@ -36,6 +36,12 @@ namespace PivotalTracker.FluentAPI.Service
             return this;
         }
 
+        public ProjectCreateFacade SetStartDateTime(System.DateTime start)
+        {
+            this.Item.first_iteration_start_time = start;
+            return this;
+        }
+
         /// <summary>
         /// Save the project into Pivotal
         /// </summary>

@@ -306,11 +306,13 @@ namespace PivotalTracker.FluentAPI.Tests
         {
             const string projectName = "test project creation";
             int id = 0;
+            DateTime startDate = new DateTime(2011, 03, 01);
             Pivotal
                .Projects()
                    .Create()
                        .SetName(projectName)
                        .SetIterationLength(3)
+                       .SetStartDateTime(startDate)
                    .Save()
                    .Do(p =>
                    {
@@ -324,6 +326,7 @@ namespace PivotalTracker.FluentAPI.Tests
                        {
                            Assert.AreNotEqual(0, p.Id);
                            Assert.AreEqual(p.Name, projectName);
+                           Assert.AreEqual(startDate, p.StartDate);
                        })
                    .Done()
               .Done()

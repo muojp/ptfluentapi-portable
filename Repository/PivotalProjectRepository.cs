@@ -35,6 +35,7 @@ namespace PivotalTracker.FluentAPI.Repository
             public bool use_https { get; set; }
             public bool bugs_and_chores_are_estimatable { get; set; }
             public bool commit_mode { get; set; }
+            public DateTimeUTC first_iteration_start_time { get; set; }
             public DateTimeUTC last_activity_at { get; set; }
 
             [XmlArray("memberships")]
@@ -58,6 +59,7 @@ namespace PivotalTracker.FluentAPI.Repository
         {
             public string name { get; set; }
             public int iteration_length { get; set; }
+            public DateTimeUTC first_iteration_start_time { get; set; }
         }
         #endregion
 
@@ -86,6 +88,7 @@ namespace PivotalTracker.FluentAPI.Repository
             lProject.IsPublic = e.@public;
             lProject.IterationLength = e.iteration_length;
             if (e.labels != null) e.labels.Split(',').ToList().ForEach(i => lProject.Labels.Add(i.Trim()));
+            lProject.StartDate = e.first_iteration_start_time;
             lProject.LastActivityDate = e.last_activity_at;
             lProject.Name = e.name;
             lProject.NumberOfDoneIterationsToShow = e.number_of_done_iterations_to_show;
