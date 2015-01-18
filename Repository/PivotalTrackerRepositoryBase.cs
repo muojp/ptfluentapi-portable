@@ -73,10 +73,9 @@ namespace PivotalTracker.FluentAPI.Repository
                     lRequest.AddParameter(data);
                 }
 
-                T result = null;
                 try
                 {
-                    result = await this.ExecuteAsync<T>(lRequest);
+                    return await this.ExecuteAsync<T>(lRequest);
                 }
                 catch (WebException e)
                 {
