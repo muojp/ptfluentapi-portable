@@ -62,7 +62,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="selector">Selector that accept a projet and returns a membership</param>
         /// <returns></returns>
-        public async Task<MembershipsFacade> Remove(Func<Project, Membership> selector)
+        public async Task<MembershipsFacade> RemoveAsync(Func<Project, Membership> selector)
         {
             await _repository.RemoveMembershipAsync(selector(this.ParentFacade.Item));
             return this;

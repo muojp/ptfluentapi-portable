@@ -47,7 +47,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// Save the project into Pivotal
         /// </summary>
         /// <returns>a facade that manage the new project</returns>
-        public async Task<ProjectFacade> Save()
+        public async Task<ProjectFacade> SaveAsync()
         {
             var repo = new Repository.PivotalProjectRepository(this.RootFacade.Token);
             var p = await repo.CreateProjectAsync(this.Item);

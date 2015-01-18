@@ -62,7 +62,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="id">the story id</param>
         /// <returns>a facade that manages the loaded Story</returns>
-        public async Task<StoryFacade<StoriesProjectFacade>> Get(int id)
+        public async Task<StoryFacade<StoriesProjectFacade>> GetAsync(int id)
         {
             
             var lStory = await _storyRepository.GetStoryAsync(this.ParentFacade.Item.Id, id);
@@ -75,7 +75,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// Get a facade that manages all the stories of this project
         /// </summary>
         /// <returns>facade that manages the result</returns>
-        public async Task<StoriesFacade> All()
+        public async Task<StoriesFacade> AllAsync()
         {
             return new StoriesFacade(this, await _storyRepository.GetStoriesAsync(this.ParentFacade.Item.Id));
         }

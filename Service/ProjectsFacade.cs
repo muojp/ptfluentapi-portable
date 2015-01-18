@@ -25,7 +25,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="predicate">predicate to match</param>
         /// <returns>a facade that manage the found project or null if no project was found</returns>
-        public async Task<ProjectFacade> FindProject(Predicate<Project> predicate)
+        public async Task<ProjectFacade> FindProjectAsync(Predicate<Project> predicate)
         {
             _projectRepository = new PivotalProjectRepository(this.RootFacade.Token);
             var list = await _projectRepository.GetProjectsAsync();
@@ -43,7 +43,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="projectId">id of the project to retrieve</param>
         /// <returns>a facade that manages the retrieved project or null if no one is found</returns>
-        public async Task<ProjectFacade> Get(int projectId)
+        public async Task<ProjectFacade> GetAsync(int projectId)
         {
             _projectRepository = new PivotalProjectRepository(this.RootFacade.Token);
             var lProject = await _projectRepository.GetProjectAsync(projectId);
