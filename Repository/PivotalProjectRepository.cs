@@ -127,14 +127,22 @@ namespace PivotalTracker.FluentAPI.Repository
             lProject.VelocityScheme = e.velocity_scheme;
             lProject.WeekStartDay = e.week_start_day;
 
-            foreach (var i in e.integrations)
-                lProject.Integrations.Add(i);
-
-            foreach (var m in e.memberships)
+            if (e.integrations != null)
             {
-                m.ProjectRef.Name = lProject.Name;
-                m.ProjectRef.Id = lProject.Id;
-                lProject.Memberships.Add(m);
+                foreach (var i in e.integrations)
+                {
+                    lProject.Integrations.Add(i);
+                }
+            }
+
+            if (e.memberships != null)
+            {
+                foreach (var m in e.memberships)
+                {
+                    m.ProjectRef.Name = lProject.Name;
+                    m.ProjectRef.Id = lProject.Id;
+                    lProject.Memberships.Add(m);
+                }
             }
 
             return lProject;
