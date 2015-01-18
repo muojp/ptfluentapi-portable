@@ -26,6 +26,11 @@ namespace PivotalTracker.FluentAPI.Tests
 
         #region Helpers
 
+        private static void CreateNewProject(string name)
+        {
+            CreateNewProjectAsync(name).Wait();
+        }
+
         private static async Task<Project> CreateNewProjectAsync(string name)
         {
            
@@ -35,6 +40,13 @@ namespace PivotalTracker.FluentAPI.Tests
                         .SetName(name)
                         .SetIterationLength(3)
                     .SaveAsync()).Item;
+        }
+
+        private static Story CreateNewStory(string name, StoryTypeEnum type, string description)
+        {
+            var task = CreateNewStoryAsync(name, type, description);
+            task.Wait();
+            return task.Result;
         }
 
         private static async Task<Story> CreateNewStoryAsync(string name, StoryTypeEnum type, string description)
@@ -51,27 +63,36 @@ namespace PivotalTracker.FluentAPI.Tests
         #endregion
 
 
-        //[ClassInitialize]
-        //public static void ClassInitialize(TestContext context)
-        //{
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            ClassInitializeAsync(context).Wait();
+        }
 
-        //    Context = context;
-        //    Pivotal = new PivotalTrackerFacade(new Token(Properties.Settings.Default.ApiKey));
+        public static async System.Threading.Tasks.Task ClassInitializeAsync(TestContext context)
+        {
+            Context = context;
+            Pivotal = new PivotalTrackerFacade(new Token(Properties.Settings.Default.ApiKey));
 
-        //    Project = Properties.Settings.Default.TestProjectId > 0 ? 
-        //        Pivotal.Projects().Get(Properties.Settings.Default.TestProjectId).Item : 
-        //        CreateNewProject("test" + DateTime.Now.Ticks.ToString());
+            Project = Properties.Settings.Default.TestProjectId > 0 ? 
+                (await Pivotal.Projects().GetAsync(Properties.Settings.Default.TestProjectId)).Item : 
+                await CreateNewProjectAsync("test" + DateTime.Now.Ticks.ToString());
 
-        //    Story = CreateNewStory("test story", StoryTypeEnum.Feature, "Story test");
+            Story = CreateNewStory("test story", StoryTypeEnum.Feature, "Story test");
 
-        //    //Uncomment to trace request in fiddler2
-        //    //System.Net.WebRequest.DefaultWebProxy = new WebProxy("localhost", 8888);
+            //Uncomment to trace request in fiddler2
+            //System.Net.WebRequest.DefaultWebProxy = new WebProxy("localhost", 8888);
 
-        //}
+        }
 
 
-        
+
         [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            ClassCleanupAsync().Wait();
+        }
+
         public static async System.Threading.Tasks.Task ClassCleanupAsync()
         {
             (await
@@ -102,6 +123,11 @@ namespace PivotalTracker.FluentAPI.Tests
         #region Stories Tests
 
         [TestMethod]
+        public void GetAllStories()
+        {
+            GetAllStoriesAsync().Wait();
+        }
+
         public async System.Threading.Tasks.Task GetAllStoriesAsync()
         {
             (await
