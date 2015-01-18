@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using PivotalTracker.FluentAPI.Domain;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -19,24 +20,36 @@ namespace PivotalTracker.FluentAPI.Repository
 
 
         #region DTOs
+        [DataContract(Name = "story", Namespace = "")]
         [XmlRoot("story")]
         public class StoryXmlResponse
         {
             public bool idSpecified { get { return id != 0; } }
+            [DataMember()]
             public int id { get; set; }
             public bool project_idSpecified { get { return project_id != 0; } }
+            [DataMember()]
             public int project_id { get; set; }
+            [DataMember()]
             public string story_type { get; set; }
+            [DataMember()]
             public string url { get; set; }
-            [XmlIgnore]
+
             public bool estimateSpecified { get { return estimate > 0; } }
+            [DataMember()]
             public int estimate { get; set; }
+            [DataMember()]
             public string current_state { get; set; }
+            [DataMember()]
             public string description { get; set; }
+            [DataMember()]
             public string name { get; set; }
+            [DataMember()]
             public string requested_by { get; set; }
             public string owned_by { get; set; }
+            [DataMember()]
             public DateTimeUTC created_at { get; set; }
+            [DataMember()]
             public DateTimeUTC updated_at { get; set; }
             public DateTimeUTC accepted_at { get; set; }
             public string labels { get; set; }
@@ -69,19 +82,27 @@ namespace PivotalTracker.FluentAPI.Repository
             public StoryXmlResponse[] stories;
         }
 
+        [DataContract(Name = "story", Namespace = "")]
         [XmlRoot("story")]
         public class StoryCreationXmlRequest
         {
+            [DataMember()]
             public string story_type { get; set; }
+            [DataMember()]
             public string name { get; set; }
+
             public string requested_by { get; set; }
+            [DataMember()]
             public string description { get; set; }
+            
             public string labels { get; set; }
+
             public string current_state { get; set; }
 
             public string owned_by { get; set; }
-            [XmlIgnore]
+
             public bool estimateSpecified { get { return estimate > 0; } }
+            [DataMember()]
             public int estimate { get; set; }
         }
 
