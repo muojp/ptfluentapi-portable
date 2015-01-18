@@ -12,6 +12,8 @@ using PortableRest;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Xml.Linq;
+using System.Runtime.Serialization;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -61,26 +63,14 @@ namespace PivotalTracker.FluentAPI.Repository
                 lRequest = new RestRequest(lUri.AbsoluteUri, method, ContentTypes.Json);
                 lRequest.AddHeader("X-TrackerToken", this.Token.ApiKey);
                 lRequest.AddHeader("Accepts", "application/json");
+                lRequest.ContentType = ContentTypes.Xml;
+                lRequest.IgnoreXmlAttributes = true;
                 // string debug = "";
                 if (data != null)
                 {
-                    using (var stream = new MemoryStream())
-                    {
-                        var writerSettings = new XmlWriterSettings { CloseOutput = false, Encoding = Encoding.UTF8, OmitXmlDeclaration = true };
-                        using (var xmlWriter = XmlWriter.Create(stream, writerSettings))
-                        {
-                            var xmlNamespace = new XmlSerializerNamespaces();
-                            xmlNamespace.Add("", "");
-                            var lRequestSerializer = new XmlSerializer(data.GetType());
-                            lRequestSerializer.Serialize(xmlWriter, data, xmlNamespace);
-                            xmlWriter.Flush();
-                            // debug = Encoding.UTF8.GetString(stream.GetBuffer());
-                            byte[] buf = new byte[stream.Length];
-                            stream.Position = 0;
-                            stream.Read(buf, 0, buf.Length);
-                            lRequest.AddParameter(buf);
-                        }
-                    }
+                    lRequest.IgnoreXmlAttributes = false;
+                    lRequest.IgnoreRootElement = true;
+                    lRequest.AddParameter(data);
                 }
 
                 T result = null;
