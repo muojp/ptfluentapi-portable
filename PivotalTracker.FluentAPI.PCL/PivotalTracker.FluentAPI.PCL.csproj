@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{15C7720C-496F-433C-9263-81A398523021}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>PivotalTracker.FluentAPI.PCL</RootNamespace>
+    <AssemblyName>PivotalTracker.FluentAPI.PCL</AssemblyName>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\Domain\Attachment.cs">
+      <Link>Domain\Attachment.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Integration.cs">
+      <Link>Domain\Integration.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Iteration.cs">
+      <Link>Domain\Iteration.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Membership.cs">
+      <Link>Domain\Membership.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\MembershipRoleEnum.cs">
+      <Link>Domain\MembershipRoleEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Note.cs">
+      <Link>Domain\Note.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Person.cs">
+      <Link>Domain\Person.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Project.cs">
+      <Link>Domain\Project.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\ProjectRef.cs">
+      <Link>Domain\ProjectRef.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Story.cs">
+      <Link>Domain\Story.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\StoryStateEnum.cs">
+      <Link>Domain\StoryStateEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\StoryTypeEnum.cs">
+      <Link>Domain\StoryTypeEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Task.cs">
+      <Link>Domain\Task.cs</Link>
+    </Compile>
+    <Compile Include="..\Domain\Token.cs">
+      <Link>Domain\Token.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\DateTimeUTC.cs">
+      <Link>Repository\DateTimeUTC.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\FormUpload.cs">
+      <Link>Repository\FormUpload.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\IPivotalTrackerRepository.cs">
+      <Link>Repository\IPivotalTrackerRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\PivotalAttachmentRepository.cs">
+      <Link>Repository\PivotalAttachmentRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\PivotalIterationRepository.cs">
+      <Link>Repository\PivotalIterationRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\PivotalMembershipsRepository.cs">
+      <Link>Repository\PivotalMembershipsRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\PivotalProjectRepository.cs">
+      <Link>Repository\PivotalProjectRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\PivotalStoryRepository.cs">
+      <Link>Repository\PivotalStoryRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\PivotalTaskRepository.cs">
+      <Link>Repository\PivotalTaskRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Repository\PivotalTrackerRepositoryBase.cs">
+      <Link>Repository\PivotalTrackerRepositoryBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\Facade.cs">
+      <Link>Service\Facade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\FacadeBase.cs">
+      <Link>Service\FacadeBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\FacadeItem.cs">
+      <Link>Service\FacadeItem.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\IFacade.cs">
+      <Link>Service\IFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\IPivotalTrackerFacade.cs">
+      <Link>Service\IPivotalTrackerFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\IterationFacade.cs">
+      <Link>Service\IterationFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\IterationsFacade.cs">
+      <Link>Service\IterationsFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\MembershipsFacade.cs">
+      <Link>Service\MembershipsFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\PivotalTrackerFacade.cs">
+      <Link>Service\PivotalTrackerFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\ProjectCreateFacade.cs">
+      <Link>Service\ProjectCreateFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\ProjectFacade.cs">
+      <Link>Service\ProjectFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\ProjectsFacade.cs">
+      <Link>Service\ProjectsFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\StoriesFacade.cs">
+      <Link>Service\StoriesFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\StoriesProjectFacade.cs">
+      <Link>Service\StoriesProjectFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\StoryCreationFacade.cs">
+      <Link>Service\StoryCreationFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Service\StoryFacade.cs">
+      <Link>Service\StoryFacade.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <ItemGroup>
+    <Folder Include="Domain\" />
+    <Folder Include="Repository\" />
+    <Folder Include="Service\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Threading.Tasks">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\portable-net45+win8+wp8+wpa81\Microsoft.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\portable-net45+win8+wp8+wpa81\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="PortableRest">
+      <HintPath>..\packages\PortableRest.3.0.1\lib\portable-net45+sl5+wp8+win8+wpa81+MonoTouch1+MonoAndroid1\PortableRest.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
