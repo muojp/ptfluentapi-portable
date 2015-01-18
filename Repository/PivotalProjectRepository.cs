@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using System.Dynamic;
 using System.Linq;
 using PivotalTracker.FluentAPI.Domain;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -69,10 +70,10 @@ namespace PivotalTracker.FluentAPI.Repository
         {   
         }
 
-        public Project GetProject(int id)
+        public async Task<Project> GetProjectAsync(int id)
         {
             var path = string.Format("/projects/{0}", id);
-            var e = this.RequestPivotal<ProjectXmlResponse>(path, null, "GET");
+            var e = await this.RequestPivotalAsync<ProjectXmlResponse>(path, null, "GET");
             return PivotalProjectRepository.CreateProject(e);
         }
 
@@ -117,21 +118,21 @@ namespace PivotalTracker.FluentAPI.Repository
             return lProject;
         }
 
-        public IEnumerable<Project> GetProjects()
+        public async Task<IEnumerable<Project>> GetProjectsAsync()
         {
             const string path = "/projects";
-            var e = this.RequestPivotal<ProjectsXmlResponse>(path, null, "GET");
+            var e = await this.RequestPivotalAsync<ProjectsXmlResponse>(path, null, "GET");
 
             return e.projects.Select(p => PivotalProjectRepository.CreateProject(p)).ToList();
 
         }
 
-        public Project CreateProject(Repository.PivotalProjectRepository.ProjectXmlRequest projectRequest)
+        public async Task<Project> CreateProjectAsync(Repository.PivotalProjectRepository.ProjectXmlRequest projectRequest)
        {
             var path = string.Format("/projects");
   
 
-            var e = this.RequestPivotal<ProjectXmlResponse>(path, projectRequest, "POST");
+            var e = await this.RequestPivotalAsync<ProjectXmlResponse>(path, projectRequest, "POST");
             return PivotalProjectRepository.CreateProject(e);
             
         }

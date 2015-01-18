@@ -2,6 +2,7 @@
 using System.IO;
 using PivotalTracker.FluentAPI.Domain;
 using PivotalTracker.FluentAPI.Repository;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Service
 {
@@ -32,11 +33,11 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="updater">Action that accepts a the story to modified (this.Item)</param>
         /// <returns>This</returns>
-        public StoryFacade<TParent> Update(Action<Story> updater)
+        public async Task<StoryFacade<TParent>> UpdateAsync(Action<Story> updater)
         {
             updater(this.Item);
            
-            this.Item = _storyRepository.UpdateStory(this.Item);
+            this.Item = await _storyRepository.UpdateStoryAsync(this.Item);
 
             return this;
         }
@@ -46,9 +47,9 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="text">text of the note</param>
         /// <returns>This</returns>
-        public StoryFacade<TParent> AddNote(string text)
+        public async Task<StoryFacade<TParent>> AddNoteAsync(string text)
         {
-            var note = _storyRepository.AddNote(this.Item.ProjectId, this.Item.Id, text);
+            var note = await _storyRepository.AddNoteAsync(this.Item.ProjectId, this.Item.Id, text);
             this.Item.Notes.Add(note);
             return this;
         }
@@ -57,9 +58,9 @@ namespace PivotalTracker.FluentAPI.Service
         /// Delete the managed StoryFacade
         /// </summary>
         /// <returns>Parent Facade</returns>
-        public TParent Delete()
+        public async Task<TParent> DeleteAsync()
         {
-            _storyRepository.DeleteStory(this.Item.ProjectId, this.Item.Id);
+            await _storyRepository.DeleteStoryAsync(this.Item.ProjectId, this.Item.Id);
             return Done();
         }
 
@@ -81,6 +82,7 @@ namespace PivotalTracker.FluentAPI.Service
         //TODO: Deviner le mime-type
         /// <summary>
         /// Upload an attachment to the managed story. The developper write into the stream
+        /// WARNING: This feature is disabled temporarily due to PCL support. Calling this method will cause NIE.
         /// </summary>
         /// <param name="action">Action that accepts the story and the upload stream</param>
         /// <param name="fileName">attachment filename in Pivotal</param>
@@ -102,14 +104,14 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="a">attachment to download</param>
         /// <returns>attachment data</returns>
-        public byte[] DownloadAttachment(Attachment a)
+        public async Task<byte[]> DownloadAttachmentAsync(Attachment a)
         {
-            return _attachRepository.DownloadAttachment(a);
+            return await _attachRepository.DownloadAttachment(a);
         }
 
-        public StoryFacade<TParent> Move(int targetStoryId, bool before = true)
+        public async Task<StoryFacade<TParent>> MoveAsync(int targetStoryId, bool before = true)
         {
-            _storyRepository.MoveStory(this.Item.ProjectId, this.Item.Id, before ? PivotalStoryRepository.MovePositionEnum.Before : PivotalStoryRepository.MovePositionEnum.After, targetStoryId);
+            await _storyRepository.MoveStoryAsync(this.Item.ProjectId, this.Item.Id, before ? PivotalStoryRepository.MovePositionEnum.Before : PivotalStoryRepository.MovePositionEnum.After, targetStoryId);
 
             return this;
         }

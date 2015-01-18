@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Serialization;
 using PivotalTracker.FluentAPI.Domain;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -50,7 +51,7 @@ namespace PivotalTracker.FluentAPI.Repository
 
             [XmlArray("tasks")]
             [XmlArrayItem("task")]
-            public Task[] tasks { get; set; }
+            public PivotalTracker.FluentAPI.Domain.Task[] tasks { get; set; }
 
 
         }
@@ -162,55 +163,55 @@ namespace PivotalTracker.FluentAPI.Repository
             return lStory;
         }
 
-        public IEnumerable<Story> GetStories(string url, string method="GET")
+        public async Task<IEnumerable<Story>> GetStoriesAsync(string url, string method="GET")
         {
-            var e = this.RequestPivotal<StoriesXmlResponse>(url, null, method);
+            var e = await this.RequestPivotalAsync<StoriesXmlResponse>(url, null, method);
             if (e.stories != null)
                 return e.stories.Select(CreateStory).ToList();
             return new List<Story>();
         }
      
         
-        public Story GetStory(int projectId, int storyId)
+        public async Task<Story> GetStoryAsync(int projectId, int storyId)
         {
             var path = string.Format("/projects/{0}/stories/{1}", projectId, storyId);
-            var e = this.RequestPivotal<StoryXmlResponse>(path, null, "GET");
+            var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, null, "GET");
 
             return PivotalStoryRepository.CreateStory(e);
         }
 
-        public IEnumerable<Story> GetStories(int projectId)
+        public async Task<IEnumerable<Story>> GetStoriesAsync(int projectId)
         {
             var path = string.Format("/projects/{0}/stories", projectId);
 
-            return GetStories(path);
+            return await GetStoriesAsync(path);
 
         }
 
         //TODO: can GetSomeStories & GetLimitedStories be an unique method ?
-        public IEnumerable<Story> GetSomeStories(int projectId, string filter)
+        public async Task<IEnumerable<Story>> GetSomeStoriesAsync(int projectId, string filter)
         {
             var path = string.Format("/projects/{0}/stories?filter={1}", projectId, Uri.EscapeDataString(filter));
-            return GetStories(path);
+            return await GetStoriesAsync(path);
             
         }
 
-        public IEnumerable<Story> GetLimitedStories(int projectId, int offset, int limit)
+        public async Task<IEnumerable<Story>> GetLimitedStoriesAsync(int projectId, int offset, int limit)
         {
             var path = string.Format("/projects/{0}/stories?limit={1}&offset={2}", projectId, limit, offset);
-            return GetStories(path);
+            return await GetStoriesAsync(path);
             
         }
 
-        public Story AddStory(int projectId, StoryCreationXmlRequest storyCreationRequest)
+        public async Task<Story> AddStoryAsync(int projectId, StoryCreationXmlRequest storyCreationRequest)
         {
             var path = string.Format("/projects/{0}/stories", projectId);
-            var e = this.RequestPivotal<StoryXmlResponse>(path, storyCreationRequest, "POST");
+            var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, storyCreationRequest, "POST");
             return CreateStory(e);
             
         }
 
-        public Story UpdateStory(Story story)
+        public async Task<Story> UpdateStoryAsync(Story story)
         {
             var path = string.Format("/projects/{0}/stories/{1}", story.ProjectId, story.Id);
             var s = new StoryXmlRequest
@@ -226,17 +227,17 @@ namespace PivotalTracker.FluentAPI.Repository
             if (story.Estimate > 0)
                 s.estimate = story.Estimate;
 
-            var e = this.RequestPivotal<StoryXmlResponse>(path, s, "PUT");
+            var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, s, "PUT");
             return CreateStory(e);
 
         }
 
-        public Note AddNote(int projectId, int storyId, string text)
+        public async Task<Note> AddNoteAsync(int projectId, int storyId, string text)
         {
             var path = string.Format("/projects/{0}/stories/{1}/notes", projectId, storyId);
             var noteReq = new Repository.PivotalStoryRepository.StoryNoteXmlRequest { text = text };
 
-            var noteResp = this.RequestPivotal<StoryNoteXmlResponse>(path, noteReq, "POST");
+            var noteResp = await this.RequestPivotalAsync<StoryNoteXmlResponse>(path, noteReq, "POST");
             var note = new Note
                            {
                                Author = noteResp.author,
@@ -249,18 +250,18 @@ namespace PivotalTracker.FluentAPI.Repository
 
         }
 
-        public Story DeleteStory(int projectId, int storyId)
+        public async Task<Story> DeleteStoryAsync(int projectId, int storyId)
         {
                 var path = string.Format("/projects/{0}/stories/{1}", projectId, storyId);
-                var e = this.RequestPivotal<StoryXmlResponse>(path, null, "DELETE");
+                var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, null, "DELETE");
 
             return CreateStory(e);
         }
 
-        public IEnumerable<Story> DeliverAllFinishedStories(int projectId)
+        public async Task<IEnumerable<Story>> DeliverAllFinishedStoriesAsync(int projectId)
         {
             var path = string.Format("/projects/{0}/stories/deliver_all_finished", projectId);
-            return GetStories(path, "PUT");
+            return await GetStoriesAsync(path, "PUT");
         }
 
         public enum MovePositionEnum
@@ -269,14 +270,14 @@ namespace PivotalTracker.FluentAPI.Repository
             Before
         } ;
 
-        public Story MoveStory(int projectId, int storyId, MovePositionEnum move, int targetStoryId)
+        public async Task<Story> MoveStoryAsync(int projectId, int storyId, MovePositionEnum move, int targetStoryId)
         {
             var path = string.Format("/projects/{0}/stories/{1}/moves?move\\[move\\]={2}&move\\[target\\]={3}", 
                 projectId,
                 storyId,
                 move,
                 targetStoryId);
-            var e = this.RequestPivotal<StoryXmlResponse>(path, null, "POST");
+            var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, null, "POST");
 
             return CreateStory(e);
         }

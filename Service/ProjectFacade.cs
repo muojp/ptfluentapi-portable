@@ -1,6 +1,7 @@
 ﻿using System;
 using PivotalTracker.FluentAPI.Domain;
 using PivotalTracker.FluentAPI.Repository;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Service
 {
@@ -54,16 +55,16 @@ namespace PivotalTracker.FluentAPI.Service
         /// Set story state to Delivered for all stories that has a Finished state
         /// </summary>
         /// <returns>This</returns>
-        public ProjectFacade DeliverAllFinishedStories()
+        public async Task<ProjectFacade> DeliverAllFinishedStoriesAsync()
         {
             var lStoryRepo = new Repository.PivotalStoryRepository(this.RootFacade.Token);
-            lStoryRepo.DeliverAllFinishedStories(this.Item.Id);
+            await lStoryRepo.DeliverAllFinishedStoriesAsync(this.Item.Id);
             return this;
         }
 
-        public ProjectFacade AcceptAllDeliveredStories()
+        public async Task<ProjectFacade> AcceptAllDeliveredStories()
         {
-            this.Stories().Filter("state:delivered").UpdateAll(s =>
+            await (await this.Stories().FilterAsync("state:delivered")).UpdateAllAsync(s =>
             {
                 s.CurrentState = StoryStateEnum.Accepted;
             });

@@ -4,6 +4,8 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.Collections.Specialized;
+using PortableRest;
+using System.Net.Http;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -18,7 +20,7 @@ namespace PivotalTracker.FluentAPI.Repository
     public static class FormUpload
     {
         private static readonly Encoding _encoding = Encoding.UTF8;
-        public static HttpWebResponse MultipartFormDataPost(string postUrl, string userAgent, Dictionary<string, object> postParameters, NameValueCollection headers=null)
+        public static HttpWebResponse MultipartFormDataPost(string postUrl, string userAgent, Dictionary<string, object> postParameters, List<KeyValuePair<string, string>> headers=null)
         {
             string formDataBoundary = "-----------------------------28947758029299";
             string contentType = "multipart/form-data; boundary=" + formDataBoundary;
@@ -29,22 +31,28 @@ namespace PivotalTracker.FluentAPI.Repository
         }
 
 
-        private static HttpWebResponse PostForm(string postUrl, string userAgent, string contentType, byte[] formData, NameValueCollection headers)
+        private static HttpWebResponse PostForm(string postUrl, string userAgent, string contentType, byte[] formData, List<KeyValuePair<string, string>> headers)
         {
-            HttpWebRequest request = WebRequest.Create(postUrl) as HttpWebRequest;
-            
+            var request = new RestRequest(postUrl, HttpMethod.Post);
+
             if (request == null)
             {
                 throw new NullReferenceException("request is not a http request");
             }
             
             // Set up the request properties
-            request.Method = "POST";
-            if (headers != null)
-                request.Headers.Add(headers);
+            if (headers != null && headers.Count != 0)
+            {
+                foreach (var header in headers)
+                {
+                    request.AddHeader(header.Key, header.Value);
+                }
+            }
             
+            // FIXME: Currently disabled because PortableRest official package doesn't support file uploading at the moment.
+            /* 
             request.AllowAutoRedirect = false;
-            request.Accept = "*/*";
+            request.Accept = "*" + "/*";
             request.KeepAlive = true;
             request.ContentType = contentType;
             request.UserAgent = userAgent;
@@ -63,6 +71,8 @@ namespace PivotalTracker.FluentAPI.Repository
             }
 
             return request.GetResponse() as HttpWebResponse;
+            */
+            return null;
         }
 
         private static byte[] GetMultipartFormData(Dictionary<string, object> postParameters, string boundary)
@@ -93,7 +103,8 @@ namespace PivotalTracker.FluentAPI.Repository
                 formDataStream.Position = 0;
                 byte[] formData = new byte[formDataStream.Length];
                 formDataStream.Read(formData, 0, formData.Length);
-                formDataStream.Close();
+                // FIXME: Temporarily disabled. Need to handle stream closing somehow.
+                // formDataStream.Close();
                 return formData;
             }
         }

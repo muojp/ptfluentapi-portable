@@ -46,7 +46,7 @@ namespace PivotalTracker.FluentAPI.Tests
                                 .SetName(name)
                                 .SetType(type)
                                 .SetDescription(description)
-                            .Save().Item;
+                            .SaveAsync().Item;
         }
         #endregion
 
@@ -159,7 +159,7 @@ namespace PivotalTracker.FluentAPI.Tests
                                 .SetName("Im famous")
                                 .SetType(StoryTypeEnum.Chore)
                                 .SetDescription("test description")
-                            .Save()
+                            .SaveAsync()
                             .Do(s =>
                             {
                                 Assert.AreEqual(s.Name, "Im famous");
@@ -227,7 +227,7 @@ namespace PivotalTracker.FluentAPI.Tests
                 .Projects()
                     .Get(Project.Id)
                         .Stories()
-                            .Filter("state:unstarted")
+                            .FilterAsync("state:unstarted")
                                 .Do(stories =>
                                 {
                                     i++;
@@ -275,7 +275,7 @@ namespace PivotalTracker.FluentAPI.Tests
                                 .SetName("This is my first story")
                                 .SetType(StoryTypeEnum.Feature)
                                 .SetDescription("i'am happy it's so easy !")
-                                .Save()
+                                .SaveAsync()
                                     .AddNote("this is really amazing")
                                     .UploadAttachment(someBytes, "attachment.txt", "text/plain")
                                     .Update(story =>
@@ -395,7 +395,7 @@ namespace PivotalTracker.FluentAPI.Tests
                                     Assert.AreNotEqual(0, s.Attachments[0].Id);
 
                                     //Download and check content
-                                    var data = f.DownloadAttachment(s.Attachments[0]);
+                                    var data = f.DownloadAttachmentAsync(s.Attachments[0]);
                                     string value = System.Text.Encoding.ASCII.GetString(data);
 
                                     Assert.AreEqual(DATA, value);
@@ -426,7 +426,7 @@ namespace PivotalTracker.FluentAPI.Tests
                 .Projects()
                     .Get(Project.Id)
                         .Membership()
-                            .All(members =>
+                            .AllAsync(members =>
                             {
                                 Assert.IsNotNull(members);
                                 Assert.AreEqual(1, members.Count());
@@ -468,7 +468,7 @@ namespace PivotalTracker.FluentAPI.Tests
                             })
                         .Done()
                         .Membership()
-                            .All(members =>
+                            .AllAsync(members =>
                             {
                                 Assert.AreEqual(0, members.Where(m => m.Person.Email == Properties.Settings.Default.NewMemberEmail).Count());
                             });

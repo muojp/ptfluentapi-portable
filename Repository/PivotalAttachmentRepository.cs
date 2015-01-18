@@ -2,6 +2,7 @@
 using System.Net;
 using System.Xml.Serialization;
 using PivotalTracker.FluentAPI.Domain;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -38,7 +39,7 @@ namespace PivotalTracker.FluentAPI.Repository
             return e.id;
         }
 
-        public byte[] DownloadAttachment(Attachment a)
+        public async Task<byte[]> DownloadAttachment(Attachment a)
         {
             if (a == null || String.IsNullOrWhiteSpace(a.Url))
                 return null;
@@ -49,7 +50,7 @@ namespace PivotalTracker.FluentAPI.Repository
             //    return lClient.DownloadData(a.Url);
             //}
 
-            return this.RequestPivotalDownload(a.Url);
+            return await this.RequestPivotalDownload(a.Url);
         }
 
        

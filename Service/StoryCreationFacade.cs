@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using PivotalTracker.FluentAPI.Domain;
 using PivotalTracker.FluentAPI.Repository;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Service
 {
@@ -59,10 +60,10 @@ namespace PivotalTracker.FluentAPI.Service
         /// Save the story to Pivotal
         /// </summary>
         /// <returns>Parent facade</returns>
-        public StoryFacade<StoriesProjectFacade> Save()
+        public async Task<StoryFacade<StoriesProjectFacade>> SaveAsync()
         {
             var repo = new Repository.PivotalStoryRepository(this.RootFacade.Token);
-            var story = repo.AddStory(this.ParentFacade.ParentFacade.Item.Id, Item);
+            var story = await repo.AddStoryAsync(this.ParentFacade.ParentFacade.Item.Id, Item);
             return new StoryFacade<StoriesProjectFacade>(this.ParentFacade, story);
         }
 
