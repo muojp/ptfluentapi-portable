@@ -59,7 +59,7 @@ namespace PivotalTracker.FluentAPI.Repository
                 lRequest.Headers.Add("Accepts", "application/json");
                 lRequest.ContentType = "application/json";
                 lRequest.Method = method;
-                string debug = "";
+                // string debug = "";
                 if (data != null)
                     using (var stream = new MemoryStream())
                     {
@@ -71,7 +71,7 @@ namespace PivotalTracker.FluentAPI.Repository
                             var lRequestSerializer = new XmlSerializer(data.GetType());
                             lRequestSerializer.Serialize(xmlWriter, data, xmlNamespace);
                             xmlWriter.Flush();
-                            debug = Encoding.UTF8.GetString(stream.GetBuffer());
+                            // debug = Encoding.UTF8.GetString(stream.GetBuffer());
                             stream.WriteTo(lRequest.GetRequestStream());
                         }
                     }
@@ -134,14 +134,14 @@ namespace PivotalTracker.FluentAPI.Repository
                     Console.WriteLine(r.ReadToEnd());
                 }
 #endif
-                throw;
+                throw e;
             }
             catch (Exception e)
             {
 #if DEBUG
                 Console.WriteLine(e.Message);
 #endif
-                throw;
+                throw e;
             }
         }
 
