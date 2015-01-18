@@ -29,9 +29,14 @@ namespace PivotalTracker.FluentAPI.Repository
         {
             string lValue = reader.ReadElementContentAsString();
             if (String.IsNullOrWhiteSpace(lValue))
+            {
                 DateTime = null;
+            }
             else
-                DateTime = System.DateTime.Parse(lValue.Replace("UTC", ""), null, DateTimeStyles.AssumeUniversal);
+            {
+                // FIXME: need a complicated (and wasteful) way to resolve abbreviated timezone info properly. Currently, simply omitted.
+                DateTime = System.DateTime.Parse(lValue.Substring(0, 19), null, DateTimeStyles.AssumeUniversal);
+            }
         }
 
         public void WriteXml(XmlWriter writer)
