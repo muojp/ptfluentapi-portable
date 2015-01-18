@@ -88,7 +88,13 @@ namespace PivotalTracker.FluentAPI.Repository
             lProject.IsCommitModeActive = e.commit_mode;
             lProject.IsPublic = e.@public;
             lProject.IterationLength = e.iteration_length;
-            if (e.labels != null) e.labels.Split(',').ToList().ForEach(i => lProject.Labels.Add(i.Trim()));
+            if (e.labels != null)
+            {
+                foreach (var label in e.labels.Split(','))
+                {
+                    lProject.Labels.Add(label.Trim());
+                }
+            }
             lProject.StartDate = e.first_iteration_start_time;
             lProject.LastActivityDate = e.last_activity_at;
             lProject.Name = e.name;

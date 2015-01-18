@@ -130,19 +130,34 @@ namespace PivotalTracker.FluentAPI.Repository
                              };
 
             if (e.attachments != null)
-                e.attachments.ToList().ForEach(a => lStory.Attachments.Add(a));
+            {
+                foreach (var attachment in e.attachments)
+                {
+                    lStory.Attachments.Add(attachment);
+                }
+            }
 
             if (e.notes != null)
-                e.notes.ToList().ForEach(a => lStory.Notes.Add(new Note()
+            {
+                foreach (var note in e.notes)
                 {
-                    Id = a.id,
-                    Author = a.author,
-                    Description = a.text,
-                    NoteDate = a.noted_at == null ? null : a.noted_at.DateTime
-                }));
+                    lStory.Notes.Add(new Note()
+                        {
+                            Id = note.id,
+                            Author = note.author,
+                            Description = note.text,
+                            NoteDate = note.noted_at == null ? null : note.noted_at.DateTime
+                        });
+                }
+            }
 
             if (e.tasks != null)
-                e.tasks.ToList().ForEach(a => lStory.Tasks.Add(a));
+            {
+                foreach (var task in e.tasks)
+                {
+                    lStory.Tasks.Add(task);
+                }
+            }
 
             return lStory;
         }
