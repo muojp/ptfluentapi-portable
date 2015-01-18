@@ -56,7 +56,8 @@ namespace PivotalTracker.FluentAPI.Repository
 
                 lRequest = WebRequest.Create(lUri);
                 lRequest.Headers.Add("X-TrackerToken", this.Token.ApiKey);
-                lRequest.ContentType = "application/xml";
+                lRequest.Headers.Add("Accepts", "application/json");
+                lRequest.ContentType = "application/json";
                 lRequest.Method = method;
                 string debug = "";
                 if (data != null)
@@ -132,6 +133,13 @@ namespace PivotalTracker.FluentAPI.Repository
                 {
                     Console.WriteLine(r.ReadToEnd());
                 }
+#endif
+                throw;
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Console.WriteLine(e.Message);
 #endif
                 throw;
             }

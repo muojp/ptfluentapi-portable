@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Dynamic;
@@ -51,7 +52,7 @@ namespace PivotalTracker.FluentAPI.Repository
         public class ProjectsXmlResponse
         {
             [XmlElement("project")]
-            public ProjectXmlResponse[] projects;
+            public Collection<ProjectXmlResponse> projects;
         }
 
         [XmlRoot("project")]
@@ -113,9 +114,9 @@ namespace PivotalTracker.FluentAPI.Repository
         public IEnumerable<Project> GetProjects()
         {
             const string path = "/projects";
-            var e = this.RequestPivotal<ProjectXmlResponse[]>(path, null, "GET");
+            var e = this.RequestPivotal<ProjectsXmlResponse>(path, null, "GET");
 
-            return e.Select(p => PivotalProjectRepository.CreateProject(p)).ToList();
+            return e.projects.Select(p => PivotalProjectRepository.CreateProject(p)).ToList();
 
         }
 

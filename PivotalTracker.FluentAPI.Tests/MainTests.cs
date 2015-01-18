@@ -51,23 +51,23 @@ namespace PivotalTracker.FluentAPI.Tests
         #endregion
 
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context)
-        {
+        //[ClassInitialize]
+        //public static void ClassInitialize(TestContext context)
+        //{
 
-            Context = context;
-            Pivotal = new PivotalTrackerFacade(new Token(Properties.Settings.Default.ApiKey));
+        //    Context = context;
+        //    Pivotal = new PivotalTrackerFacade(new Token(Properties.Settings.Default.ApiKey));
 
-            Project = Properties.Settings.Default.TestProjectId > 0 ? 
-                Pivotal.Projects().Get(Properties.Settings.Default.TestProjectId).Item : 
-                CreateNewProject("test" + DateTime.Now.Ticks.ToString());
+        //    Project = Properties.Settings.Default.TestProjectId > 0 ? 
+        //        Pivotal.Projects().Get(Properties.Settings.Default.TestProjectId).Item : 
+        //        CreateNewProject("test" + DateTime.Now.Ticks.ToString());
 
-            Story = CreateNewStory("test story", StoryTypeEnum.Feature, "Story test");
+        //    Story = CreateNewStory("test story", StoryTypeEnum.Feature, "Story test");
 
-            //Uncomment to trace request in fiddler2
-            //System.Net.WebRequest.DefaultWebProxy = new WebProxy("localhost", 8888);
+        //    //Uncomment to trace request in fiddler2
+        //    //System.Net.WebRequest.DefaultWebProxy = new WebProxy("localhost", 8888);
 
-        }
+        //}
 
 
         

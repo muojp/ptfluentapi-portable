@@ -26,6 +26,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// <returns>a facade that manage the found project or null if no project was found</returns>
         public ProjectFacade FindProject(Predicate<Project> predicate)
         {
+            _projectRepository = new PivotalProjectRepository(this.RootFacade.Token);
             var list = _projectRepository.GetProjects();
             foreach (var project in list)
             {

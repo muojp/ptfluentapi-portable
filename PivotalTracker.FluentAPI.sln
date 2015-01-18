@@ -4,11 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PivotalTracker.FluentAPI", "PivotalTracker.FluentAPI.csproj", "{5F0D4B11-9007-4F93-BB36-81CF4F8BF42F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FECDF753-F299-427C-9483-80BD6E1791DE}"
-	ProjectSection(SolutionItems) = preProject
-		Local.testsettings = Local.testsettings
-		PivotalTracker.FluentAPI.vsmdi = PivotalTracker.FluentAPI.vsmdi
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PivotalTracker.FluentAPI.Tests", "PivotalTracker.FluentAPI.Tests\PivotalTracker.FluentAPI.Tests.csproj", "{8ECD9FD1-14A9-4F70-8D4F-A3C40FA14B16}"
 EndProject
