@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PivotalTracker.FluentAPI.Tests", "PivotalTracker.FluentAPI.Tests\PivotalTracker.FluentAPI.Tests.csproj", "{8ECD9FD1-14A9-4F70-8D4F-A3C40FA14B16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PivotalTracker.FluentAPI.PCL", "PivotalTracker.FluentAPI.PCL\PivotalTracker.FluentAPI.PCL.csproj", "{15C7720C-496F-433C-9263-81A398523021}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,18 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15C7720C-496F-433C-9263-81A398523021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Debug|x86.Build.0 = Debug|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Release|x86.ActiveCfg = Release|Any CPU
+		{15C7720C-496F-433C-9263-81A398523021}.Release|x86.Build.0 = Release|Any CPU
 		{5F0D4B11-9007-4F93-BB36-81CF4F8BF42F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F0D4B11-9007-4F93-BB36-81CF4F8BF42F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F0D4B11-9007-4F93-BB36-81CF4F8BF42F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
