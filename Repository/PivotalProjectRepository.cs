@@ -8,6 +8,7 @@ using System.Dynamic;
 using System.Linq;
 using PivotalTracker.FluentAPI.Domain;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -18,34 +19,55 @@ namespace PivotalTracker.FluentAPI.Repository
     public class PivotalProjectRepository : PivotalTrackerRepositoryBase
     {
         #region DTOs
+        [DataContract(Name = "project", Namespace = "")]
         [XmlRoot("project")]
         public class ProjectXmlResponse
         {
+            [DataMember()]
             public int id { get; set; }
+            [DataMember()]
             public string name { get; set; }
+            [DataMember()]
             public int iteration_length { get; set; }
+            [DataMember()]
             public DayOfWeek week_start_day { get; set; }
+            [DataMember()]
             public string point_scale { get; set; }
+            [DataMember()]
             public string account { get; set; }
+            [DataMember()]
             public string velocity_scheme { get; set; }
+            [DataMember()]
             public int current_velocity { get; set; }
+            [DataMember()]
             public int initial_velocity { get; set; }
+            [DataMember()]
             public int number_of_done_iterations_to_show { get; set; }
+            [DataMember()]
             public string labels { get; set; }
+            [DataMember()]
             public bool allow_attachments { get; set; }
+            [DataMember()]
             public bool @public { get; set; }
+            [DataMember()]
             public bool use_https { get; set; }
+            [DataMember()]
             public bool bugs_and_chores_are_estimatable { get; set; }
+            [DataMember()]
             public bool commit_mode { get; set; }
+            [DataMember()]
             public DateTimeUTC first_iteration_start_time { get; set; }
+            [DataMember()]
             public DateTimeUTC last_activity_at { get; set; }
 
             [XmlArray("memberships")]
             [XmlArrayItem("membership")]
+            [DataMember()]
             public Membership[] memberships { get; set; }
 
             [XmlArray("integrations")]
             [XmlArrayItem("integration")]
+            [DataMember()]
             public Integration[] integrations { get; set; }
         }
 
