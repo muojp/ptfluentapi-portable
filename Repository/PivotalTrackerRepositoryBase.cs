@@ -76,7 +76,8 @@ namespace PivotalTracker.FluentAPI.Repository
                             xmlWriter.Flush();
                             // debug = Encoding.UTF8.GetString(stream.GetBuffer());
                             byte[] buf = new byte[stream.Length];
-                            stream.Write(buf, 0, buf.Length);
+                            stream.Position = 0;
+                            stream.Read(buf, 0, buf.Length);
                             lRequest.AddParameter(buf);
                         }
                     }
