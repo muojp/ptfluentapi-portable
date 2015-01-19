@@ -1,5 +1,8 @@
 # What is it ?
 Pivotal Tracker FluentAPI is C# API that uses the Fluent pattern to connect to the PivotalTracker REST API.
+
+ptfluentapi-portable is a portable version of Pivotal Tracker FluentAPI. It has many changes and now PCL version support Pivotal Tracker v5 APIs instead of legacy v3 APIs.
+
 # How to use it ?
 
 First create the Pivotal Tracker Facade
