@@ -8,6 +8,12 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using PivotalTracker.FluentAPI.Domain;
+using PortableRest;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Xml.Linq;
+using System.Runtime.Serialization;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -15,9 +21,10 @@ namespace PivotalTracker.FluentAPI.Repository
     /// Base class that all repositories can inherit.
     /// </summary>
     /// 
-    public class PivotalTrackerRepositoryBase : IPivotalTrackerRepository
+    public class PivotalTrackerRepositoryBase : RestClient, IPivotalTrackerRepository
     {
         private const int REQUEST_PAUSE = 2000; //milliseconds
+
         /// <summary>
         /// PivotalTrackerRepositoryBase Constructor
         /// </summary>
@@ -27,9 +34,7 @@ namespace PivotalTracker.FluentAPI.Repository
             if (token == null || String.IsNullOrWhiteSpace(token.ApiKey) || String.IsNullOrWhiteSpace(token.BaseUrl))
                 throw new ArgumentNullException("token");
 
-
             this.Token = token;
-            
         }
 
         public Token Token { get; protected set; }
@@ -41,62 +46,77 @@ namespace PivotalTracker.FluentAPI.Repository
         /// <typeparam name="T">The Pivotal XML Response will be deserialized into T. Must be conformed to the Pivotal API</typeparam>
         /// <param name="path">Relative URL (path) of the Pivotal API (ex:/projects/PROJECT_ID/stories/STORY_ID)</param>
         /// <param name="data">object that will be serialized to the Request stream (usefull for PUT request)</param>
-        /// <param name="method">method used to send the requestPivotal</param>
+        /// <param name="methodName">method used to send the requestPivotal</param>
         /// <returns>the deserialized Pivotal XML Response</returns>
-        protected T RequestPivotal<T>(string path, dynamic data, string method = "POST")
+        protected async Task<T> RequestPivotalAsync<T>(string path, dynamic data, string methodName = "POST")
             where T : class
         {
             //Sometimes Pivotal Fails, so let's retry several times
             int nTries = 2;
 
+            var method = MapHttpMethod(methodName);
             while(nTries > 0)
             {
                 Uri lUri = GetPivotalURI(path);
-                WebRequest lRequest;
+                RestRequest lRequest;
 
-                lRequest = WebRequest.Create(lUri);
-                lRequest.Headers.Add("X-TrackerToken", this.Token.ApiKey);
-                lRequest.Headers.Add("Accepts", "application/json");
-                lRequest.ContentType = "application/json";
-                lRequest.Method = method;
+                lRequest = new RestRequest(lUri.AbsoluteUri, method, ContentTypes.Json);
+                lRequest.AddHeader("X-TrackerToken", this.Token.ApiKey);
+                lRequest.AddHeader("Accepts", "application/json");
+                lRequest.ContentType = ContentTypes.Json;
                 // string debug = "";
                 if (data != null)
-                    using (var stream = new MemoryStream())
-                    {
-                        var writerSettings = new XmlWriterSettings { CloseOutput = false, Encoding = Encoding.UTF8, OmitXmlDeclaration = true };
-                        using (var xmlWriter = XmlWriter.Create(stream, writerSettings))
-                        {
-                            var xmlNamespace = new XmlSerializerNamespaces();
-                            xmlNamespace.Add("", "");
-                            var lRequestSerializer = new XmlSerializer(data.GetType());
-                            lRequestSerializer.Serialize(xmlWriter, data, xmlNamespace);
-                            xmlWriter.Flush();
-                            // debug = Encoding.UTF8.GetString(stream.GetBuffer());
-                            stream.WriteTo(lRequest.GetRequestStream());
-                        }
-                    }
-                else
-                    if (method == "PUT")
-                        lRequest.ContentLength = 0; //Force to 0 if no data and PUT Method to avoid Pivotal Exception
-                
+                {
+                    lRequest.AddParameter(data);
+                }
+
                 try
                 {
-                    return Deserialize<T>(lRequest.GetResponse().GetResponseStream());
+                    return await this.ExecuteAsync<T>(lRequest);
                 }
-                catch (WebException e)
+                catch (HttpRequestException e)
                 {
-                    using (var r = new StreamReader(e.Response.GetResponseStream()))
-                    {
-                        Console.WriteLine(r.ReadToEnd());
-                    }
                     nTries--;
                     if (nTries == 0)
-                        throw;
-                    System.Threading.Thread.Sleep(REQUEST_PAUSE);
+                    {
+                        throw e;
+                    }
                 }
+                await System.Threading.Tasks.Task.Delay(REQUEST_PAUSE);
             }
 
             throw new ArgumentOutOfRangeException("REQUEST_PAUSE", "must be greater than 0"); //Cannot be reached 
+        }
+
+        private static HttpMethod MapHttpMethod(string methodName)
+        {
+            HttpMethod method;
+            switch (methodName)
+            {
+                case "DELETE":
+                    method = HttpMethod.Delete;
+                    break;
+                case "HEAD":
+                    method = HttpMethod.Head;
+                    break;
+                case "OPTIONS":
+                    method = HttpMethod.Options;
+                    break;
+                case "POST":
+                    method = HttpMethod.Post;
+                    break;
+                case "PUT":
+                    method = HttpMethod.Put;
+                    break;
+                case "TRACE":
+                    method = HttpMethod.Trace;
+                    break;
+                case "GET":
+                default:
+                    method = HttpMethod.Get;
+                    break;
+            }
+            return method;
         }
 
         /// <summary>
@@ -131,7 +151,7 @@ namespace PivotalTracker.FluentAPI.Repository
 #if DEBUG
                 using (var r = new StreamReader(e.Response.GetResponseStream()))
                 {
-                    Console.WriteLine(r.ReadToEnd());
+                    // Console.WriteLine(r.ReadToEnd());
                 }
 #endif
                 throw e;
@@ -139,7 +159,7 @@ namespace PivotalTracker.FluentAPI.Repository
             catch (Exception e)
             {
 #if DEBUG
-                Console.WriteLine(e.Message);
+                // Console.WriteLine(e.Message);
 #endif
                 throw e;
             }
@@ -155,16 +175,13 @@ namespace PivotalTracker.FluentAPI.Repository
         /// <remarks>Bug in Pivotal : do not work (http://gsfn.us/t/26f14)</remarks>
         /// <param name="url">absolute URL to the attachment</param>
         /// <returns>data downloaded</returns>
-        protected byte[] RequestPivotalDownload(string url)
+        protected async Task<byte[]> RequestPivotalDownload(string url)
         {
-            var lReq = WebRequest.Create(url);
-            lReq.Headers.Add("X-TrackerToken", Token.ApiKey);
+            var lReq = new RestRequest(url);
+            lReq.AddHeader("X-TrackerToken", Token.ApiKey);
 
-            using (var stream = new MemoryStream())
-            {
-                lReq.GetResponse().GetResponseStream().CopyTo(stream);
-                return stream.ToArray();
-            }
+            // FIXME: this implementation should cause file corruption. We don't touch this because the comment says this API doesn't work. Need to test later.
+            return Encoding.UTF8.GetBytes(await this.ExecuteAsync<string>(lReq));
         }
 
         /// <summary>
@@ -174,20 +191,8 @@ namespace PivotalTracker.FluentAPI.Repository
         /// <returns>the sanitized Url</returns>
         static string UrlSanitize(string url)
         {
-            url = System.Text.RegularExpressions.Regex.Replace(url, @"\s+", "-");
-            string stFormD = url.Normalize(NormalizationForm.FormD);
-            StringBuilder sb = new StringBuilder();
-
-            for (int ich = 0; ich < stFormD.Length; ich++)
-            {
-                System.Globalization.UnicodeCategory uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(stFormD[ich]);
-                if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
-                {
-                    sb.Append(stFormD[ich]);
-                }
-            }
-
-            return (sb.ToString());
+            // URI normalizer is not accessible in PCL. The only user of this method was RequestPivotalUpload<T>, it's removed temporarily, so we removed this method also.
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -201,43 +206,8 @@ namespace PivotalTracker.FluentAPI.Repository
         /// <returns>Deserialized object from the Pivotal XML Response</returns>
         protected T RequestPivotalUpload<T>(string path, byte[] data, string filename="upload", string contentType="application/octet-stream")
         {
-            Uri uri = GetPivotalURI(path);
-
-            Dictionary<string, object> postParameters = new Dictionary<string, object>();
-            string ufilename = UrlSanitize(filename);
-            postParameters.Add("Filedata", new FormUpload.FileParameter(data, ufilename, contentType));            
-
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("X-TrackerToken", Token.ApiKey);
-
-            HttpWebResponse webResponse = FormUpload.MultipartFormDataPost(uri.ToString(), "PivotalTracker.FluentAPI UserAgent", postParameters, headers);
-            return Deserialize<T>(webResponse.GetResponseStream());
-
-
-            #region Do not work with WebClient, i keep the code
-            
-            //Uri uri = new Uri("http://www.postbin.org/1jto9yk");
-
-            //try
-            //{
-            //    using (var lClient = new WebClient())
-            //    {
-            //        lClient.Headers.Add("X-TrackerToken", this.Token.ApiKey);
-            //        using (var stream = new MemoryStream(lClient.UploadFile(uri, "POST", @"c:\temp\test.png")))
-            //        {
-            //            return Deserialize<T>(stream);
-            //        }
-            //    }
-            //}
-            //catch (WebException e)
-            //{
-            //    using (var r = new StreamReader(e.Response.GetResponseStream()))
-            //    {
-            //        Console.WriteLine(r.ReadToEnd());
-            //    }
-            //    throw;
-            //}
-            #endregion
+            // Uploading files have several problems. Removed support at the moment.
+            throw new NotImplementedException();
         }
 
       

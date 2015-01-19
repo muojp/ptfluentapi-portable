@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PivotalTracker.FluentAPI.Domain;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Service
 {
@@ -24,9 +25,9 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="action">action that accept membeship list</param>
         /// <returns>This</returns>
-        public MembershipsFacade All(Action<IEnumerable<Membership>> action)
+        public async Task<MembershipsFacade> AllAsync(Action<IEnumerable<Membership>> action)
         {
-            action(_repository.GetAllMemberships(this.ParentFacade.Item.Id));
+            action(await _repository.GetAllMembershipsAsync(this.ParentFacade.Item.Id));
             return this;
         }
 
@@ -35,12 +36,12 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="membership">a initialized membership (email is mandatory)</param>
         /// <returns>This</returns>
-        public MembershipsFacade Add(Membership membership)
+        public async Task<MembershipsFacade> Add(Membership membership)
         {
 
             membership.ProjectRef.Name = this.ParentFacade.Item.Name;
             membership.ProjectRef.Id = this.ParentFacade.Item.Id;
-            _repository.AddMembership(membership);
+            await _repository.AddMembershipAsync(membership);
 
             return this;
         }
@@ -50,10 +51,10 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="creator">factory that accept the project object and create the membership</param>
         /// <returns>This</returns>
-        public MembershipsFacade Add(Func<Project, Membership> creator)
+        public async Task<MembershipsFacade> Add(Func<Project, Membership> creator)
         {
             var m = creator(this.ParentFacade.Item);
-            return Add(m);
+            return await Add(m);
         }
 
         /// <summary>
@@ -61,9 +62,9 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="selector">Selector that accept a projet and returns a membership</param>
         /// <returns></returns>
-        public MembershipsFacade Remove(Func<Project, Membership> selector)
+        public async Task<MembershipsFacade> RemoveAsync(Func<Project, Membership> selector)
         {
-            _repository.RemoveMembership(selector(this.ParentFacade.Item));
+            await _repository.RemoveMembershipAsync(selector(this.ParentFacade.Item));
             return this;
         }
     }

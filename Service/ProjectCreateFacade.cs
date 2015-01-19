@@ -1,4 +1,5 @@
 ﻿using PivotalTracker.FluentAPI.Domain;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Service
 {
@@ -36,9 +37,9 @@ namespace PivotalTracker.FluentAPI.Service
             return this;
         }
 
-        public ProjectCreateFacade SetStartDateTime(System.DateTime start)
+        public ProjectCreateFacade SetPublic(bool isPublic)
         {
-            this.Item.first_iteration_start_time = start;
+            this.Item.@public = isPublic;
             return this;
         }
 
@@ -46,10 +47,10 @@ namespace PivotalTracker.FluentAPI.Service
         /// Save the project into Pivotal
         /// </summary>
         /// <returns>a facade that manage the new project</returns>
-        public ProjectFacade Save()
+        public async Task<ProjectFacade> SaveAsync()
         {
             var repo = new Repository.PivotalProjectRepository(this.RootFacade.Token);
-            var p = repo.CreateProject(this.Item);
+            var p = await repo.CreateProjectAsync(this.Item);
 
             return new ProjectFacade(this.ParentFacade, p);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using PivotalTracker.FluentAPI.Domain;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Repository
 {
@@ -31,47 +32,47 @@ namespace PivotalTracker.FluentAPI.Repository
         }
         #endregion
 
-        public IEnumerable<Membership> GetAllMemberships(int projectId)
+        public async Task<IEnumerable<Membership>> GetAllMembershipsAsync(int projectId)
         {
             var path = string.Format("/projects/{0}/memberships", projectId);
-            var memberships = this.RequestPivotal<MembershipsXmlResponse>(path, null, "GET");
+            var memberships = await this.RequestPivotalAsync<MembershipsXmlResponse>(path, null, "GET");
 
 
             return memberships.memberships;
 
         }
 
-        public Membership GetMembership(int projectId, int membershipId)
+        public async Task<Membership> GetMembershipAsync(int projectId, int membershipId)
         {
             var path = string.Format("/projects/{0}/memberships/{1}", projectId, membershipId);
-            var membership = this.RequestPivotal<Membership>(path, null, "GET");
+            var membership = await this.RequestPivotalAsync<Membership>(path, null, "GET");
 
 
             return membership;
         }
 
-        public Membership AddMembership(Membership membership)
+        public async Task<Membership> AddMembershipAsync(Membership membership)
         {
             var path = string.Format("/projects/{0}/memberships", membership.ProjectRef.Id);
-            var result = this.RequestPivotal<Membership>(path, membership, "POST");
+            var result = await this.RequestPivotalAsync<Membership>(path, membership, "POST");
 
 
             return result;
 
         }
 
-        public Membership RemoveMembership(int projectId, int membershipId)
+        public async Task<Membership> RemoveMembershipAsync(int projectId, int membershipId)
         {
             var path = string.Format("/projects/{0}/memberships/{1}", projectId, membershipId, "DELETE");
-            var membership = this.RequestPivotal<Membership>(path, null, "GET");
+            var membership = await this.RequestPivotalAsync<Membership>(path, null, "GET");
 
 
             return membership;
 
         }
-        public Membership RemoveMembership(Membership membership)
+        public async Task<Membership> RemoveMembershipAsync(Membership membership)
         {
-            return RemoveMembership(membership.ProjectRef.Id, membership.Id);
+            return await RemoveMembershipAsync(membership.ProjectRef.Id, membership.Id);
         }
     }
 }

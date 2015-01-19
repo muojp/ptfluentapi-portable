@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using PivotalTracker.FluentAPI.Domain;
+using System.Threading.Tasks;
 
 namespace PivotalTracker.FluentAPI.Service
 {
@@ -50,12 +51,12 @@ namespace PivotalTracker.FluentAPI.Service
         /// <param name="action">action that accepts a story</param>
         /// <returns>This</returns>
         /// <remarks>saves are done after each action call</remarks>
-        public StoriesFacade UpdateAll(Action<Story> action)
+        public async Task<StoriesFacade> UpdateAllAsync(Action<Story> action)
         {
             foreach (var s in Item)
             {
                 StoryFacade<StoriesFacade> f = new StoryFacade<StoriesFacade>(this, s);
-                f.Update(action);
+                await f.UpdateAsync(action);
             }
             return this;
         }

@@ -25,7 +25,7 @@ namespace PivotalTracker.FluentAPI.Domain
         /// </summary>
         /// <param name="apiKey">you API Key to connect to the Pivotal API</param>
         /// <param name="baseUrl">the base Url of the Pivotal API</param>
-        public Token(string apiKey, string baseUrl = "http://www.pivotaltracker.com/services/v3/")
+        public Token(string apiKey, string baseUrl = "https://www.pivotaltracker.com/services/v5/")
         {
             ApiKey = apiKey;
             BaseUrl = baseUrl;

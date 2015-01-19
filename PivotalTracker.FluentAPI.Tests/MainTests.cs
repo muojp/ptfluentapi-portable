@@ -7,6 +7,8 @@ using PivotalTracker.FluentAPI.Service;
 using PivotalTracker.FluentAPI.Domain;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace PivotalTracker.FluentAPI.Tests
 {
@@ -25,62 +27,82 @@ namespace PivotalTracker.FluentAPI.Tests
 
         #region Helpers
 
-        private static Project CreateNewProject(string name)
+        private static void CreateNewProject(string name)
+        {
+            CreateNewProjectAsync(name).Wait();
+        }
+
+        private static async Task<Project> CreateNewProjectAsync(string name)
         {
            
-            return Pivotal
+            return (await Pivotal
                 .Projects()
                     .Create()
                         .SetName(name)
                         .SetIterationLength(3)
-                    .Save().Item;
+                    .SaveAsync()).Item;
         }
 
         private static Story CreateNewStory(string name, StoryTypeEnum type, string description)
         {
-            return Pivotal
-                .Projects()
-                    .Get(Project.Id)
+            var task = CreateNewStoryAsync(name, type, description);
+            task.Wait();
+            return task.Result;
+        }
+
+        private static async Task<Story> CreateNewStoryAsync(string name, StoryTypeEnum type, string description)
+        {
+            return (await
+                (await Pivotal.Projects().GetAsync(Project.Id))
                         .Stories()
                             .Create()
                                 .SetName(name)
                                 .SetType(type)
                                 .SetDescription(description)
-                            .Save().Item;
+                            .SaveAsync()).Item;
         }
         #endregion
 
 
-        //[ClassInitialize]
-        //public static void ClassInitialize(TestContext context)
-        //{
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            ClassInitializeAsync(context).Wait();
+        }
 
-        //    Context = context;
-        //    Pivotal = new PivotalTrackerFacade(new Token(Properties.Settings.Default.ApiKey));
+        public static async System.Threading.Tasks.Task ClassInitializeAsync(TestContext context)
+        {
+            Context = context;
+            Pivotal = new PivotalTrackerFacade(new Token(Properties.Settings.Default.ApiKey));
 
-        //    Project = Properties.Settings.Default.TestProjectId > 0 ? 
-        //        Pivotal.Projects().Get(Properties.Settings.Default.TestProjectId).Item : 
-        //        CreateNewProject("test" + DateTime.Now.Ticks.ToString());
+            Project = Properties.Settings.Default.TestProjectId > 0 ? 
+                (await Pivotal.Projects().GetAsync(Properties.Settings.Default.TestProjectId)).Item : 
+                await CreateNewProjectAsync("test" + DateTime.Now.Ticks.ToString());
 
-        //    Story = CreateNewStory("test story", StoryTypeEnum.Feature, "Story test");
+            Story = CreateNewStory("test story", StoryTypeEnum.Feature, "Story test");
 
-        //    //Uncomment to trace request in fiddler2
-        //    //System.Net.WebRequest.DefaultWebProxy = new WebProxy("localhost", 8888);
+            //Uncomment to trace request in fiddler2
+            //System.Net.WebRequest.DefaultWebProxy = new WebProxy("localhost", 8888);
 
-        //}
+        }
 
 
-        
+
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            Pivotal
-                .Projects()
-                    .Get(Project.Id)
+            ClassCleanupAsync().Wait();
+        }
+
+        public static async System.Threading.Tasks.Task ClassCleanupAsync()
+        {
+            (await
+                (await Pivotal.Projects().GetAsync(Project.Id))
                         .Stories()
-                            .All()
-                                .Each(f=>{
-                                    f.Delete();
+                            .AllAsync())
+                                .Each(async f =>
+                                {
+                                    await f.DeleteAsync();
                                 });
                             
 
@@ -104,11 +126,17 @@ namespace PivotalTracker.FluentAPI.Tests
         [TestMethod]
         public void GetAllStories()
         {
-            Pivotal
+            GetAllStoriesAsync().Wait();
+        }
+
+        public async System.Threading.Tasks.Task GetAllStoriesAsync()
+        {
+            (await
+            (await Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Stories()
-                            .All()
+                            .AllAsync())
                                 .Do((f, s) =>
                                 {
                                     Assert.IsTrue(true);
@@ -121,21 +149,25 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void UpdateStory()
+        public async System.Threading.Tasks.Task UpdateStoryAsync()
         {
             const string DESCRIPTION = "test updated successfully";
 
+            (await
+            (await
+            (await
+            (await
             Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Stories()
-                            .Get(Story.Id)
-                                .Update(s =>
+                            .GetAsync(Story.Id))
+                                .UpdateAsync(s =>
                                 {
                                     s.Description = DESCRIPTION;
-                                })
+                                }))
                             .Done()
-                            .Get(Story.Id)
+                            .GetAsync(Story.Id))
                                 .Do((f, s) =>
                                 {
                                     Assert.AreEqual(s.Description, DESCRIPTION);
@@ -149,17 +181,20 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void CreateStory()
+        [Ignore]
+        public async System.Threading.Tasks.Task CreateStoryAsync()
         {
+            (await
+            (await
             Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Stories()
                             .Create()
                                 .SetName("Im famous")
                                 .SetType(StoryTypeEnum.Chore)
                                 .SetDescription("test description")
-                            .Save()
+                            .SaveAsync())
                             .Do(s =>
                             {
                                 Assert.AreEqual(s.Name, "Im famous");
@@ -174,16 +209,20 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void AddNoteToStory()
+        public async System.Threading.Tasks.Task AddNoteToStoryAsync()
         {
+            (await
+            (await
+            (await
+            (await
             Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Stories()
-                            .Get(Story.Id)
-                                .AddNote("YOUPI")
+                            .GetAsync(Story.Id))
+                                .AddNoteAsync("YOUPI"))
                             .Done()
-                            .Get(Story.Id)
+                            .GetAsync(Story.Id))
                                 .Do(s =>
                                 {
                                     Assert.AreEqual(1, s.Notes.Count(n => n.Description == "YOUPI"));
@@ -196,38 +235,43 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void DeleteStory()
+        public async System.Threading.Tasks.Task DeleteStoryAsync()
         {
-            Story s = CreateNewStory("to  be deleted", StoryTypeEnum.Feature, "delete me!");
-
+            Story s = await CreateNewStoryAsync("to  be deleted", StoryTypeEnum.Feature, "delete me!");
 
             try
             {
+                await
+                (await
+                (await
+                (await
                 Pivotal
                     .Projects()
-                        .Get(Project.Id)
+                        .GetAsync(Project.Id))
                             .Stories()
-                                .Get(s.Id)
-                                .Delete()
+                                .GetAsync(s.Id))
+                                .DeleteAsync())
                             .Done()
                             .Stories()
-                                .Get(s.Id);
+                                .GetAsync(s.Id);
+                Assert.Fail("request to deleted stories need to cause 404 error");
             }
-            catch (System.Net.WebException ex)
+            catch (HttpRequestException ex)
             {
-                Assert.AreEqual(HttpStatusCode.NotFound, ((HttpWebResponse)ex.Response).StatusCode);
             }
         }
 
         [TestMethod]
-        public void FilterStories()
+        public async System.Threading.Tasks.Task FilterStoriesAsync()
         {
             var i = 0;
+            (await
+            (await
             Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Stories()
-                            .Filter("state:unstarted")
+                            .FilterAsync("state:unstarted"))
                                 .Do(stories =>
                                 {
                                     i++;
@@ -242,13 +286,15 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void GetOneStory()
+        public async System.Threading.Tasks.Task GetOneStoryAsync()
         {
+            (await
+            (await
             Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Stories()
-                           .Get(Story.Id)
+                           .GetAsync(Story.Id))
                            .Do(s => {
                                Assert.AreEqual(Story.Id, s.Id);
                                Assert.AreEqual(Story.Name, s.Name);                                
@@ -263,29 +309,34 @@ namespace PivotalTracker.FluentAPI.Tests
         #region Project Tests
 
         [TestMethod]
-        public void EntireTest()
+        public async System.Threading.Tasks.Task EntireTestAsync()
         {
             byte[] someBytes = System.Text.Encoding.ASCII.GetBytes("Hello World"); //Some bytes
 
-           Pivotal
+            (await
+            (await
+            (await
+            (await
+            (await
+            Pivotal
                 .Projects()
-                    .Get(Project.Id) //ProjectId
+                    .GetAsync(Project.Id)) //ProjectId
                         .Stories()
                             .Create()
                                 .SetName("This is my first story")
                                 .SetType(StoryTypeEnum.Feature)
                                 .SetDescription("i'am happy it's so easy !")
-                                .Save()
-                                    .AddNote("this is really amazing")
+                                .SaveAsync())
+                                    .AddNoteAsync("this is really amazing"))
                                     .UploadAttachment(someBytes, "attachment.txt", "text/plain")
-                                    .Update(story =>
+                                    .UpdateAsync(story =>
                                     {
                                         story.Estimate = 3;
                                         story.OwnedBy = story.RequestedBy;
                                         story.CurrentState = StoryStateEnum.Started;
-                                    })
+                                    }))
                         .Done()
-                        .Filter("state:started")
+                        .FilterAsync("state:started"))
                             .Do(stories =>
                             {
                                 foreach (var s in stories)
@@ -302,18 +353,21 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void CreateProject()
+        [Ignore]
+        public async System.Threading.Tasks.Task CreateProjectAsync()
         {
             const string projectName = "test project creation";
             int id = 0;
             DateTime startDate = new DateTime(2011, 03, 01);
+            (await
+            (await
             Pivotal
                .Projects()
                    .Create()
                        .SetName(projectName)
                        .SetIterationLength(3)
-                       .SetStartDateTime(startDate)
-                   .Save()
+                       .SetPublic(true)
+                   .SaveAsync())
                    .Do(p =>
                    {
                        Assert.AreNotEqual(0, p.Id);
@@ -321,12 +375,11 @@ namespace PivotalTracker.FluentAPI.Tests
                        Assert.AreEqual(p.Name, projectName);
                    })
                    .Done()
-                   .Get(id) //reload
+                   .GetAsync(id)) //reload
                        .Do(p =>
                        {
                            Assert.AreNotEqual(0, p.Id);
                            Assert.AreEqual(p.Name, projectName);
-                           Assert.AreEqual(startDate, p.StartDate);
                        })
                    .Done()
               .Done()
@@ -334,82 +387,91 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void DeliverAllFinishedStories()
+        public async System.Threading.Tasks.Task DeliverAllFinishedStoriesAsync()
         {
-            Story s = CreateNewStory("to  be finished", StoryTypeEnum.Feature, "finish me!");
+            Story s = await CreateNewStoryAsync("to  be finished", StoryTypeEnum.Feature, "finish me!");
            
-                Pivotal
-                    .Projects()
-                        .Get(Project.Id)
-                            .Stories()
-                                .Get(s.Id)
-                                .Update(story =>
-                                {
-                                    story.Estimate = 1;
-                                    story.OwnedBy = story.RequestedBy;
-                                    story.CurrentState = StoryStateEnum.Finished;
-                                })
-                                .Done()
+            await
+            (await
+            (await
+            (await
+            (await
+            (await
+            Pivotal
+                .Projects()
+                    .GetAsync(Project.Id))
+                        .Stories()
+                            .GetAsync(s.Id))
+                            .UpdateAsync(story =>
+                            {
+                                story.Estimate = 1;
+                                story.OwnedBy = story.RequestedBy;
+                                story.CurrentState = StoryStateEnum.Finished;
+                            }))
                             .Done()
-                            .DeliverAllFinishedStories()
-                            .Stories()
-                                .Get(s.Id)
-                                    .Do(story =>
-                                    {
-                                        Assert.AreEqual(StoryStateEnum.Delivered, story.CurrentState);
-                                    })
-                                    .Delete();
+                        .Done()
+                        .DeliverAllFinishedStoriesAsync())
+                        .Stories()
+                            .GetAsync(s.Id))
+                                .Do(story =>
+                                {
+                                    Assert.AreEqual(StoryStateEnum.Delivered, story.CurrentState);
+                                })
+                                .DeleteAsync();
         }
 
         #endregion
 
         #region AttachmentsTest
 
-        private static StoryFacade<StoriesProjectFacade> UploadAttachment(string DATA)
+        private static async Task<StoryFacade<StoriesProjectFacade>> UploadAttachment(string DATA)
         {
-            return Pivotal
-                            .Projects()
-                                 .Get(Project.Id)
-                                     .Stories()
-                                         .Get(Story.Id)
-                                             .UploadAttachment((s, stream) =>
-                                             {
-                                                 using (var writer = new StreamWriter(stream, Encoding.ASCII))
-                                                 {
-                                                     writer.WriteLine(DATA);
-                                                 }
-                                             })
-                                         .Done()
-                                         .Get(Story.Id);
+            return
+                await
+                (await
+                (await
+                Pivotal
+                    .Projects()
+                        .GetAsync(Project.Id))
+                            .Stories()
+                                .GetAsync(Story.Id))
+                                    .UploadAttachment((s, stream) =>
+                                    {
+                                        using (var writer = new StreamWriter(stream, Encoding.ASCII))
+                                        {
+                                            writer.WriteLine(DATA);
+                                        }
+                                    })
+                                .Done()
+                                .GetAsync(Story.Id);
         }
         [TestMethod]
         [Ignore]
-        public void AddAttachmentThenDownloadThenCheckContent()
+        public async System.Threading.Tasks.Task AddAttachmentThenDownloadThenCheckContentAsync()
         {
             const string DATA = "This is an attachment";
 
-            UploadAttachment(DATA)
-                                .Do((f, s) =>
-                                {
-                                    Assert.AreEqual(1, s.Attachments.Count);
-                                    Assert.AreNotEqual(0, s.Attachments[0].Id);
+            (await UploadAttachment(DATA))
+                .Do(async (f, s) =>
+                {
+                    Assert.AreEqual(1, s.Attachments.Count);
+                    Assert.AreNotEqual(0, s.Attachments[0].Id);
 
-                                    //Download and check content
-                                    var data = f.DownloadAttachment(s.Attachments[0]);
-                                    string value = System.Text.Encoding.ASCII.GetString(data);
+                    //Download and check content
+                    var data = await f.DownloadAttachmentAsync(s.Attachments[0]);
+                    string value = System.Text.Encoding.ASCII.GetString(data);
 
-                                    Assert.AreEqual(DATA, value);
-
-
-                                });
+                    Assert.AreEqual(DATA, value);
+                });
         }
 
         [TestMethod]
-        public void AddAttachmentButDoNotCheckContent()
+        [Ignore]
+        public async System.Threading.Tasks.Task AddAttachmentButDoNotCheckContentAsync()
         {
             const string DATA = "This is an attachment";
 
-            UploadAttachment(DATA)
+            (await UploadAttachment(DATA))
                                 .Do((f, s) =>
                                 {
                                     Assert.AreEqual(1, s.Attachments.Count);
@@ -420,13 +482,15 @@ namespace PivotalTracker.FluentAPI.Tests
 
         #region Membership
         [TestMethod]
-        public void GetAllMemberships()
+        public async System.Threading.Tasks.Task GetAllMembershipsAsync()
         {
+            await
+            (await
             Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Membership()
-                            .All(members =>
+                            .AllAsync(members =>
                             {
                                 Assert.IsNotNull(members);
                                 Assert.AreEqual(1, members.Count());
@@ -436,11 +500,13 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void AddMembership()
+        public async System.Threading.Tasks.Task AddMembershipAsync()
         {
+            await
+            (await
             Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Membership()
                             .Add(p =>
                             {
@@ -454,21 +520,24 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        public void RemoveMembership()
+        public async System.Threading.Tasks.Task RemoveMembership()
         {
-            AddMembership();
+            await AddMembershipAsync();
 
+            await
+            (await
+            (await
             Pivotal
                 .Projects()
-                    .Get(Project.Id)
+                    .GetAsync(Project.Id))
                         .Membership()
-                            .Remove(p =>
+                            .RemoveAsync(p =>
                             {
                                 return p.Memberships.Where(m => m.Person.Email == Properties.Settings.Default.NewMemberEmail).First();
-                            })
+                            }))
                         .Done()
                         .Membership()
-                            .All(members =>
+                            .AllAsync(members =>
                             {
                                 Assert.AreEqual(0, members.Where(m => m.Person.Email == Properties.Settings.Default.NewMemberEmail).Count());
                             });
