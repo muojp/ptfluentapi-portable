@@ -48,11 +48,10 @@ namespace PivotalTracker.FluentAPI.Repository
             public string requested_by { get; set; }
             public string owned_by { get; set; }
             [DataMember()]
-            public DateTimeUTC created_at { get; set; }
+            public DateTime created_at { get; set; }
             [DataMember()]
-            public DateTimeUTC updated_at { get; set; }
-            public DateTimeUTC accepted_at { get; set; }
-            public string labels { get; set; }
+            public DateTime updated_at { get; set; }
+            public DateTime accepted_at { get; set; }
 
             [XmlArray("attachments")]
             [XmlArrayItem("attachment")]
@@ -75,13 +74,6 @@ namespace PivotalTracker.FluentAPI.Repository
 
         }
 
-        [XmlRoot("stories")]
-        public class StoriesXmlResponse
-        {
-            [XmlElement("story")]
-            public StoryXmlResponse[] stories;
-        }
-
         [DataContract(Name = "story", Namespace = "")]
         [XmlRoot("story")]
         public class StoryCreationXmlRequest
@@ -94,8 +86,6 @@ namespace PivotalTracker.FluentAPI.Repository
             public string requested_by { get; set; }
             [DataMember()]
             public string description { get; set; }
-            
-            public string labels { get; set; }
 
             public string current_state { get; set; }
 
@@ -118,7 +108,7 @@ namespace PivotalTracker.FluentAPI.Repository
             public int id { get; set; }
             public string text { get; set; }
             public string author { get; set; }
-            public DateTimeUTC noted_at { get; set; }
+            public DateTime noted_at { get; set; }
         }
 
         #endregion
@@ -130,7 +120,10 @@ namespace PivotalTracker.FluentAPI.Repository
 
         internal static Story CreateStory(StoryXmlResponse e)
         {
-
+            if (e == null)
+            {
+                return new Story();
+            }
             var lStory = new Story()
                              {
                                  AcceptedDate = e.accepted_at,
@@ -168,7 +161,7 @@ namespace PivotalTracker.FluentAPI.Repository
                             Id = note.id,
                             Author = note.author,
                             Description = note.text,
-                            NoteDate = note.noted_at == null ? null : note.noted_at.DateTime
+                            NoteDate = note.noted_at
                         });
                 }
             }
@@ -186,9 +179,11 @@ namespace PivotalTracker.FluentAPI.Repository
 
         public async Task<IEnumerable<Story>> GetStoriesAsync(string url, string method="GET")
         {
-            var e = await this.RequestPivotalAsync<StoriesXmlResponse>(url, null, method);
-            if (e.stories != null)
-                return e.stories.Select(CreateStory).ToList();
+            var e = await this.RequestPivotalAsync<StoryXmlResponse[]>(url, null, method);
+            if (e.Length != 0)
+            {
+                return e.ToList().Select(CreateStory).ToList();
+            }
             return new List<Story>();
         }
      
@@ -239,7 +234,6 @@ namespace PivotalTracker.FluentAPI.Repository
                         {
                             current_state = story.CurrentState.ToString().ToLowerInvariant(),
                             description = story.Description,                            
-                            labels = story.Labels.Count == 0 ? "" : story.Labels.Aggregate((a, b) => a+b),
                             name = story.Name,
                             owned_by = story.OwnedBy,
                             story_type = story.Type.ToString().ToLowerInvariant(),
@@ -263,7 +257,7 @@ namespace PivotalTracker.FluentAPI.Repository
                            {
                                Author = noteResp.author,
                                Description = noteResp.text,
-                               NoteDate = noteResp.noted_at == null ? (DateTime?)null : noteResp.noted_at.DateTime.Value,
+                               NoteDate = noteResp.noted_at,
                                Id = noteResp.id,
                                StoryId = storyId
                            };

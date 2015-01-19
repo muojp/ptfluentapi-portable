@@ -74,8 +74,6 @@ namespace PivotalTracker.FluentAPI.Service
         /// <returns>This</returns>
         public StoryCreationFacade SetLabel(string labels)
         {
-            Item.labels = labels;
-
             return this;
         }
 

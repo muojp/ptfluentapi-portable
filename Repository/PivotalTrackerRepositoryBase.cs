@@ -63,13 +63,10 @@ namespace PivotalTracker.FluentAPI.Repository
                 lRequest = new RestRequest(lUri.AbsoluteUri, method, ContentTypes.Json);
                 lRequest.AddHeader("X-TrackerToken", this.Token.ApiKey);
                 lRequest.AddHeader("Accepts", "application/json");
-                lRequest.ContentType = ContentTypes.Xml;
-                lRequest.IgnoreXmlAttributes = true;
+                lRequest.ContentType = ContentTypes.Json;
                 // string debug = "";
                 if (data != null)
                 {
-                    lRequest.IgnoreXmlAttributes = false;
-                    lRequest.IgnoreRootElement = true;
                     lRequest.AddParameter(data);
                 }
 
@@ -77,12 +74,8 @@ namespace PivotalTracker.FluentAPI.Repository
                 {
                     return await this.ExecuteAsync<T>(lRequest);
                 }
-                catch (WebException e)
+                catch (HttpRequestException e)
                 {
-                    using (var r = new StreamReader(e.Response.GetResponseStream()))
-                    {
-                        // Console.WriteLine(r.ReadToEnd());
-                    }
                     nTries--;
                     if (nTries == 0)
                     {

@@ -75,9 +75,6 @@
     <Compile Include="..\Domain\Token.cs">
       <Link>Domain\Token.cs</Link>
     </Compile>
-    <Compile Include="..\Repository\DateTimeUTC.cs">
-      <Link>Repository\DateTimeUTC.cs</Link>
-    </Compile>
     <Compile Include="..\Repository\FormUpload.cs">
       <Link>Repository\FormUpload.cs</Link>
     </Compile>

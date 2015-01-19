@@ -37,9 +37,9 @@ namespace PivotalTracker.FluentAPI.Service
             return this;
         }
 
-        public ProjectCreateFacade SetStartDateTime(System.DateTime start)
+        public ProjectCreateFacade SetPublic(bool isPublic)
         {
-            this.Item.first_iteration_start_time = start;
+            this.Item.@public = isPublic;
             return this;
         }
 

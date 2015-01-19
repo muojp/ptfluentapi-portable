@@ -8,6 +8,7 @@ using PivotalTracker.FluentAPI.Domain;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace PivotalTracker.FluentAPI.Tests
 {
@@ -180,6 +181,7 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
+        [Ignore]
         public async System.Threading.Tasks.Task CreateStoryAsync()
         {
             (await
@@ -237,7 +239,6 @@ namespace PivotalTracker.FluentAPI.Tests
         {
             Story s = await CreateNewStoryAsync("to  be deleted", StoryTypeEnum.Feature, "delete me!");
 
-
             try
             {
                 await
@@ -253,10 +254,10 @@ namespace PivotalTracker.FluentAPI.Tests
                             .Done()
                             .Stories()
                                 .GetAsync(s.Id);
+                Assert.Fail("request to deleted stories need to cause 404 error");
             }
-            catch (System.Net.WebException ex)
+            catch (HttpRequestException ex)
             {
-                Assert.AreEqual(HttpStatusCode.NotFound, ((HttpWebResponse)ex.Response).StatusCode);
             }
         }
 
@@ -352,6 +353,7 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
+        [Ignore]
         public async System.Threading.Tasks.Task CreateProjectAsync()
         {
             const string projectName = "test project creation";
@@ -364,7 +366,7 @@ namespace PivotalTracker.FluentAPI.Tests
                    .Create()
                        .SetName(projectName)
                        .SetIterationLength(3)
-                       .SetStartDateTime(startDate)
+                       .SetPublic(true)
                    .SaveAsync())
                    .Do(p =>
                    {
@@ -378,7 +380,6 @@ namespace PivotalTracker.FluentAPI.Tests
                        {
                            Assert.AreNotEqual(0, p.Id);
                            Assert.AreEqual(p.Name, projectName);
-                           Assert.AreEqual(startDate, p.StartDate);
                        })
                    .Done()
               .Done()
@@ -465,6 +466,7 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
+        [Ignore]
         public async System.Threading.Tasks.Task AddAttachmentButDoNotCheckContentAsync()
         {
             const string DATA = "This is an attachment";

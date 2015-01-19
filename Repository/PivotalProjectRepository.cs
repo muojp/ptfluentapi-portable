@@ -19,46 +19,26 @@ namespace PivotalTracker.FluentAPI.Repository
     public class PivotalProjectRepository : PivotalTrackerRepositoryBase
     {
         #region DTOs
-        [DataContract(Name = "project", Namespace = "")]
-        [XmlRoot("project")]
         public class ProjectXmlResponse
         {
-            [DataMember()]
             public int id { get; set; }
-            [DataMember()]
             public string name { get; set; }
-            [DataMember()]
+            public int version { get; set; }
             public int iteration_length { get; set; }
-            [DataMember()]
             public DayOfWeek week_start_day { get; set; }
-            [DataMember()]
             public string point_scale { get; set; }
-            [DataMember()]
-            public string account { get; set; }
-            [DataMember()]
+            public string account_id { get; set; }
             public string velocity_scheme { get; set; }
-            [DataMember()]
             public int current_velocity { get; set; }
-            [DataMember()]
             public int initial_velocity { get; set; }
-            [DataMember()]
             public int number_of_done_iterations_to_show { get; set; }
-            [DataMember()]
-            public string labels { get; set; }
-            [DataMember()]
             public bool allow_attachments { get; set; }
-            [DataMember()]
             public bool @public { get; set; }
-            [DataMember()]
             public bool use_https { get; set; }
-            [DataMember()]
             public bool bugs_and_chores_are_estimatable { get; set; }
-            [DataMember()]
             public bool commit_mode { get; set; }
-            [DataMember()]
-            public DateTimeUTC first_iteration_start_time { get; set; }
-            [DataMember()]
-            public DateTimeUTC last_activity_at { get; set; }
+            public DateTime start_time { get; set; }
+            public DateTime last_activity_at { get; set; }
 
             [XmlArray("memberships")]
             [XmlArrayItem("membership")]
@@ -83,7 +63,7 @@ namespace PivotalTracker.FluentAPI.Repository
         {
             public string name { get; set; }
             public int iteration_length { get; set; }
-            public DateTimeUTC first_iteration_start_time { get; set; }
+            public bool @public { get; set; }
         }
         #endregion
 
@@ -102,7 +82,7 @@ namespace PivotalTracker.FluentAPI.Repository
         protected static Project CreateProject(ProjectXmlResponse e)
         {
             var lProject = new Project();
-            lProject.Account = e.account;
+            lProject.Account = e.account_id;
             lProject.CurrentVelocity = e.current_velocity;
             lProject.Id = e.id;
             lProject.InitialVelocity = e.initial_velocity;
@@ -111,14 +91,8 @@ namespace PivotalTracker.FluentAPI.Repository
             lProject.IsCommitModeActive = e.commit_mode;
             lProject.IsPublic = e.@public;
             lProject.IterationLength = e.iteration_length;
-            if (e.labels != null)
-            {
-                foreach (var label in e.labels.Split(','))
-                {
-                    lProject.Labels.Add(label.Trim());
-                }
-            }
-            lProject.StartDate = e.first_iteration_start_time;
+            // FIXME: restore
+            lProject.StartDate = e.start_time;
             lProject.LastActivityDate = e.last_activity_at;
             lProject.Name = e.name;
             lProject.NumberOfDoneIterationsToShow = e.number_of_done_iterations_to_show;
