@@ -39,6 +39,26 @@ namespace PivotalTracker.FluentAPI.Service
         }
 
         /// <summary>
+        /// Get all projects
+        /// </summary>
+        /// <returns>a list of facades those manages the retrieved projects or null if no one is found</returns>
+        public async Task<List<ProjectFacade>> GetAllAsync()
+        {
+            _projectRepository = new PivotalProjectRepository(this.RootFacade.Token);
+            var lProjects = await _projectRepository.GetProjectsAsync();
+            if (lProjects == null)
+                return null;
+
+            List<ProjectFacade> projectFacadeList = new List<ProjectFacade>();
+            foreach (var lProject in lProjects)
+            {
+                projectFacadeList.Add(new ProjectFacade(this, lProject));
+            }
+
+            return projectFacadeList;
+        }
+
+        /// <summary>
         /// Get a specific project by its id
         /// </summary>
         /// <param name="projectId">id of the project to retrieve</param>

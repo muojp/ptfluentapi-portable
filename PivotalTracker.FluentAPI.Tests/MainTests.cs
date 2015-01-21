@@ -9,6 +9,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
+using PivotalTracker.FluentAPI.Repository;
 
 namespace PivotalTracker.FluentAPI.Tests
 {
@@ -122,6 +123,14 @@ namespace PivotalTracker.FluentAPI.Tests
 
 
         #region Stories Tests
+
+        [TestMethod]
+        public async System.Threading.Tasks.Task GetAllProjectsAsync()
+        {
+            var projectsFacadeList = await Pivotal.Projects().GetAllAsync();
+            Assert.IsNotNull(projectsFacadeList);
+            Assert.AreNotEqual(0, projectsFacadeList.Count);
+        }
 
         [TestMethod]
         public void GetAllStories()
