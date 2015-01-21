@@ -51,13 +51,6 @@ namespace PivotalTracker.FluentAPI.Repository
             public Integration[] integrations { get; set; }
         }
 
-        [XmlRoot("projects")]
-        public class ProjectsXmlResponse
-        {
-            [XmlElement("project")]
-            public Collection<ProjectXmlResponse> projects;
-        }
-
         [XmlRoot("project")]
         public class ProjectXmlRequest
         {
@@ -125,9 +118,9 @@ namespace PivotalTracker.FluentAPI.Repository
         public async Task<IEnumerable<Project>> GetProjectsAsync()
         {
             const string path = "/projects";
-            var e = await this.RequestPivotalAsync<ProjectsXmlResponse>(path, null, "GET");
+            var e = await this.RequestPivotalAsync<ProjectXmlResponse[]>(path, null, "GET");
 
-            return e.projects.Select(p => PivotalProjectRepository.CreateProject(p)).ToList();
+            return e.Select(p => PivotalProjectRepository.CreateProject(p)).ToList();
 
         }
 
