@@ -11,6 +11,8 @@ namespace PivotalTracker.FluentAPI.Domain
         Unscheduled,
         [XmlEnum("unstarted")]
         Unstarted,
+        [XmlEnum("planned")]
+        Planned,
         [XmlEnum("started")]
         Started,
         [XmlEnum("finished")]
