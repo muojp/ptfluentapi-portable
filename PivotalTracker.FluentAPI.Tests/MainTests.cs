@@ -265,7 +265,7 @@ namespace PivotalTracker.FluentAPI.Tests
                                 .GetAsync(s.Id);
                 Assert.Fail("request to deleted stories need to cause 404 error");
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
             }
         }
