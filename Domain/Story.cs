@@ -14,7 +14,7 @@ namespace PivotalTracker.FluentAPI.Domain
             Attachments = new List<Attachment>();
             Tasks = new List<Task>();
             Notes = new List<Note>();
-            Labels = new List<string>();
+            Labels = new List<Label>();
         }
 
         public int Id { get; set; }
@@ -39,7 +39,7 @@ namespace PivotalTracker.FluentAPI.Domain
         public string OwnedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? AcceptedDate { get; set; }
-        public IList<string> Labels { get; private set; }
+        public IList<Label> Labels { get; private set; }
 
         public IList<Attachment> Attachments { get; private set;}
         public IList<Task> Tasks { get; private set; }

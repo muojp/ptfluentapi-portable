@@ -61,6 +61,11 @@ namespace PivotalTracker.FluentAPI.Repository
             [XmlArrayItem("note")]
             public StoryNoteXmlResponse[] notes { get; set; }
 
+            [XmlArray("labels")]
+            [XmlArrayItem]
+            [DataMember()]
+            public StoryLabelXmlResponse[] labels { get; set; }
+
             [XmlArray("tasks")]
             [XmlArrayItem("task")]
             public PivotalTracker.FluentAPI.Domain.Task[] tasks { get; set; }
@@ -111,6 +116,16 @@ namespace PivotalTracker.FluentAPI.Repository
             public DateTime noted_at { get; set; }
         }
 
+        public class StoryLabelXmlResponse
+        {
+            public DateTime created_at { get; set; }
+            public int id { get; set; }
+            public string kind { get; set; }
+            public string name { get; set; }
+            public int project_id { get; set; }
+            public DateTime updated_at { get; set; }
+        }
+
         #endregion
       
 
@@ -143,6 +158,20 @@ namespace PivotalTracker.FluentAPI.Repository
                                  Type = (StoryTypeEnum)Enum.Parse(typeof(StoryTypeEnum), e.story_type, true),
                                  Url = new Uri(e.url)
                              };
+
+            if (e.labels != null)
+            {
+                foreach (var label in e.labels)
+                {
+                    lStory.Labels.Add(new Label
+                    {
+                        CreatedDate = label.created_at,
+                        Id = label.id,
+                        Name = label.name,
+                        UpdatedDate = label.updated_at
+                    });
+                }
+            }
 
             if (e.attachments != null)
             {
