@@ -551,7 +551,25 @@ namespace PivotalTracker.FluentAPI.Tests
                                 Assert.AreEqual(0, members.Where(m => m.Person.Email == Properties.Settings.Default.NewMemberEmail).Count());
                             });
         }
-        
+
+        [TestMethod]
+        public async System.Threading.Tasks.Task CreateStoryWithLabelsAsync()
+        {
+            var srcLabels = new[] { "foo", "bar", "baz" };
+            var joinedLabels = string.Join(",", srcLabels.OrderBy(a => a));
+
+            var s = (await (await Pivotal.Projects().GetAsync(Project.Id))
+                .Stories()
+                .Create()
+                    .SetName("a story with labels")
+                    .SetType(StoryTypeEnum.Feature)
+                    .SetLabel(joinedLabels)
+                .SaveAsync()).Item;
+
+            var actualLabels = string.Join(",", s.Labels.OrderBy(a => a.Name).Select(a => a.Name));
+            Assert.AreEqual(joinedLabels, actualLabels);
+        }
+
         #endregion
 
     }
