@@ -552,22 +552,40 @@ namespace PivotalTracker.FluentAPI.Tests
                             });
         }
 
-        [TestMethod]
-        public async System.Threading.Tasks.Task CreateStoryWithLabelsAsync()
+        async System.Threading.Tasks.Task CreateStoryWithLabelsAsync(bool setLabelsViaArray)
         {
             var srcLabels = new[] { "foo", "bar", "baz" };
             var joinedLabels = string.Join(",", srcLabels.OrderBy(a => a));
 
-            var s = (await (await Pivotal.Projects().GetAsync(Project.Id))
+            var r = (await Pivotal.Projects().GetAsync(Project.Id))
                 .Stories()
                 .Create()
                     .SetName("a story with labels")
-                    .SetType(StoryTypeEnum.Feature)
-                    .SetLabel(joinedLabels)
-                .SaveAsync()).Item;
+                    .SetType(StoryTypeEnum.Feature);
+            if (setLabelsViaArray)
+            {
+                r.SetLabel(joinedLabels);
+            }
+            else
+            {
+                r.SetLabels(srcLabels);
+            }
+            var s = (await r.SaveAsync()).Item;
 
             var actualLabels = string.Join(",", s.Labels.OrderBy(a => a.Name).Select(a => a.Name));
             Assert.AreEqual(joinedLabels, actualLabels);
+        }
+
+        [TestMethod]
+        public async System.Threading.Tasks.Task CreateStoryWithLabelsViaJoinedStringAsync()
+        {
+            await CreateStoryWithLabelsAsync(false);
+        }
+
+        [TestMethod]
+        public async System.Threading.Tasks.Task CreateStoryWithLabelsViaArrayAsync()
+        {
+            await CreateStoryWithLabelsAsync(true);
         }
 
         #endregion

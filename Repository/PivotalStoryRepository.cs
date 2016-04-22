@@ -79,6 +79,21 @@ namespace PivotalTracker.FluentAPI.Repository
 
         }
 
+        [DataContract]
+        public class StoryCreationLabel
+        {
+            public static implicit operator StoryCreationLabel(string s)
+            {
+                return new StoryCreationLabel { name = s };
+            }
+
+            [DataMember(EmitDefaultValue = false)]
+            public int id;
+
+            [DataMember(EmitDefaultValue = false)]
+            public string name;
+        }
+
         [DataContract(Name = "story", Namespace = "")]
         [XmlRoot("story")]
         public class StoryCreationXmlRequest
@@ -99,6 +114,9 @@ namespace PivotalTracker.FluentAPI.Repository
             public bool estimateSpecified { get { return estimate > 0; } }
             [DataMember()]
             public int estimate { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public List<StoryCreationLabel> labels { get; set; }
         }
 
         [XmlRoot("note")]
