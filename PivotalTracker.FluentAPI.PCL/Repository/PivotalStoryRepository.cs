@@ -95,7 +95,7 @@ namespace PivotalTracker.FluentAPI.Repository
         }
 
         [DataContract]
-        public class StoryCreationRequest
+        public class StoryCreationXmlRequest
         {
             [DataMember]
             public string story_type { get; set; }
@@ -265,7 +265,7 @@ namespace PivotalTracker.FluentAPI.Repository
             
         }
 
-        public async Task<Story> AddStoryAsync(int projectId, StoryCreationRequest storyCreationRequest)
+        public async Task<Story> AddStoryAsync(int projectId, StoryCreationXmlRequest storyCreationRequest)
         {
             var path = string.Format("/projects/{0}/stories", projectId);
             var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, storyCreationRequest, "POST");

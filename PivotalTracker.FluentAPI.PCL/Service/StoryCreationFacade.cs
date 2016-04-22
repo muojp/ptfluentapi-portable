@@ -11,14 +11,14 @@ namespace PivotalTracker.FluentAPI.Service
     /// <summary>
     /// Facade used to Create a story
     /// </summary>
-    public class StoryCreationFacade : FacadeItem<StoryCreationFacade, StoriesProjectFacade, PivotalStoryRepository.StoryCreationRequest>
+    public class StoryCreationFacade : FacadeItem<StoryCreationFacade, StoriesProjectFacade, PivotalStoryRepository.StoryCreationXmlRequest>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parent">Parent facade</param>
         /// <param name="item">The (empty) story instanciated by the parent Facade in the DTO format</param>
-        public StoryCreationFacade(StoriesProjectFacade parent, PivotalStoryRepository.StoryCreationRequest item) : base(parent, item)
+        public StoryCreationFacade(StoriesProjectFacade parent, PivotalStoryRepository.StoryCreationXmlRequest item) : base(parent, item)
         {
         }
 
