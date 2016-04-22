@@ -74,6 +74,18 @@ namespace PivotalTracker.FluentAPI.Service
         /// <returns>This</returns>
         public StoryCreationFacade SetLabel(string labels)
         {
+            Item.labels = labels.Split(',').Select<string, PivotalStoryRepository.StoryCreationLabel>(o => o).ToList();
+            return this;
+        }
+
+        /// <summary>
+        /// Set labels of the story.
+        /// </summary>
+        /// <param name="labels">labels as string array</param>
+        /// <returns>This</returns>
+        public StoryCreationFacade SetLabels(string[] labels)
+        {
+            Item.labels = labels.Select<string, PivotalStoryRepository.StoryCreationLabel>(o => o).ToList();
             return this;
         }
 
