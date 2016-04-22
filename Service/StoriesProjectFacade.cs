@@ -53,7 +53,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// <returns>StoryCreationFacade that manages the creation</returns>
         public StoryCreationFacade Create()
         {
-            return new StoryCreationFacade(this, new PivotalStoryRepository.StoryCreationXmlRequest());
+            return new StoryCreationFacade(this, new PivotalStoryRepository.StoryCreationRequest());
 
         }
 

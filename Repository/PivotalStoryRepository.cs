@@ -94,17 +94,16 @@ namespace PivotalTracker.FluentAPI.Repository
             public string name;
         }
 
-        [DataContract(Name = "story", Namespace = "")]
-        [XmlRoot("story")]
-        public class StoryCreationXmlRequest
+        [DataContract]
+        public class StoryCreationRequest
         {
-            [DataMember()]
+            [DataMember]
             public string story_type { get; set; }
-            [DataMember()]
+            [DataMember]
             public string name { get; set; }
 
             public string requested_by { get; set; }
-            [DataMember()]
+            [DataMember]
             public string description { get; set; }
 
             public string current_state { get; set; }
@@ -112,7 +111,7 @@ namespace PivotalTracker.FluentAPI.Repository
             public string owned_by { get; set; }
 
             public bool estimateSpecified { get { return estimate > 0; } }
-            [DataMember()]
+            [DataMember]
             public int estimate { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
@@ -266,7 +265,7 @@ namespace PivotalTracker.FluentAPI.Repository
             
         }
 
-        public async Task<Story> AddStoryAsync(int projectId, StoryCreationXmlRequest storyCreationRequest)
+        public async Task<Story> AddStoryAsync(int projectId, StoryCreationRequest storyCreationRequest)
         {
             var path = string.Format("/projects/{0}/stories", projectId);
             var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, storyCreationRequest, "POST");
