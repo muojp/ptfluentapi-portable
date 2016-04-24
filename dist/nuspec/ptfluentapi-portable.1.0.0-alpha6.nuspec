@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>ptfluentapi-portable</id>
+        <version>1.0.0-alpha6</version>
+        <title>PivotalTrackerFluentAPI-PCL</title>
+        <authors>muo_jp</authors>
+        <licenseUrl>https://github.com/muojp/ptfluentapi-portable/raw/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/muojp/ptfluentapi-portable/</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Based on great PivotalTracker FluentAPI library. Ported to PCL and switched supoprted API version from v3 to v5. Not all features are complete, so it's in alpha release. This is by far the only PivotalTracker API NuGet package maintained in 2015.</description>
+        <copyright>2011 PlasmaSoft</copyright>
+        <dependencies>
+            <dependency id="PortableRest" version="3.0.1" />
+            <dependency id="Microsoft.Bcl" version="1.1.10" />
+            <dependency id="Microsoft.Bcl.Build" version="1.0.21" />
+            <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Newtonsoft.Json" version="8.0.2" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\..\PivotalTracker.FluentAPI.PCL\bin\Release\PivotalTracker.FluentAPI.PCL.dll" target="lib\PivotalTracker.FluentAPI.PCL.dll" />
+    </files>
+</package>
