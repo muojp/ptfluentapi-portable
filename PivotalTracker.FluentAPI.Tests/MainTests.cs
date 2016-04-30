@@ -395,6 +395,8 @@ namespace PivotalTracker.FluentAPI.Tests
            .Done();
         }
 
+        // NOTE: This endpoint was removed between v3 -> v5. So, we'll also remove this method shortly.
+        [Ignore]
         [TestMethod]
         public async System.Threading.Tasks.Task DeliverAllFinishedStoriesAsync()
         {
