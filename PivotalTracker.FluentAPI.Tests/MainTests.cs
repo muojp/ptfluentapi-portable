@@ -158,6 +158,18 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
+        public async System.Threading.Tasks.Task GetAllStoriesInfoAsync()
+        {
+            (await
+            (await Pivotal.Projects().GetAsync(Project.Id))
+                    .Stories().AllAsync())
+                    .Each(s =>
+                    {
+                        Assert.IsFalse(string.IsNullOrEmpty(s.Item.Name));
+                    });
+        }
+
+        [TestMethod]
         public async System.Threading.Tasks.Task UpdateStoryAsync()
         {
             const string DESCRIPTION = "test updated successfully";
@@ -326,25 +338,20 @@ namespace PivotalTracker.FluentAPI.Tests
             (await
             (await
             (await
-            (await
-            Pivotal
-                .Projects()
-                    .GetAsync(Project.Id)) //ProjectId
-                        .Stories()
-                            .Create()
-                                .SetName("This is my first story")
-                                .SetType(StoryTypeEnum.Feature)
-                                .SetDescription("i'am happy it's so easy !")
-                                .SaveAsync())
-                                    .AddNoteAsync("this is really amazing"))
-                                    .UploadAttachment(someBytes, "attachment.txt", "text/plain")
-                                    .UpdateAsync(story =>
-                                    {
-                                        story.Estimate = 3;
-                                        story.OwnedBy = story.RequestedBy;
-                                        story.CurrentState = StoryStateEnum.Started;
-                                    }))
-                        .Done()
+            (await Pivotal.Projects().GetAsync(Project.Id)) //ProjectId
+                .Stories()
+                .Create()
+                .SetName("This is my first story")
+                .SetType(StoryTypeEnum.Feature)
+                .SetDescription("i'am happy it's so easy !")
+                .SaveAsync())
+                    .AddNoteAsync("this is really amazing"))
+                        // .UploadAttachment(someBytes, "attachment.txt", "text/plain")
+                        .UpdateAsync(story =>
+                        {
+                            story.Estimate = 3;
+                            story.CurrentState = StoryStateEnum.Started;
+                        })).Done()
                         .FilterAsync("state:started"))
                             .Do(stories =>
                             {
@@ -352,13 +359,11 @@ namespace PivotalTracker.FluentAPI.Tests
                                 {
                                     Console.WriteLine("{0}: {1} ({2})", s.Id, s.Name, s.Type);
                                     foreach (var n in s.Notes)
+                                    {
                                         Console.WriteLine("\tNote {0} ({1}): {2}", n.Id, n.Description, n.NoteDate);
+                                    }
                                 }
-                            })
-                        .Done()
-                    .Done()
-                .Done()
-            .Done();
+                            });
         }
 
         [TestMethod]
