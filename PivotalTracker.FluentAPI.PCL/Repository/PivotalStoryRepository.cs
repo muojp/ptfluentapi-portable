@@ -88,10 +88,41 @@ namespace PivotalTracker.FluentAPI.Repository
 
         }
 
-        [XmlRoot("story")]
-        public class StoryXmlRequest : StoryXmlResponse
+        [DataContract]
+        public class StoryXmlRequest
         {
+            [DataMember(EmitDefaultValue = false)]
+            public int id { get; set; }
 
+            [DataMember(EmitDefaultValue = false)]
+            public int project_id { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public string story_type { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public string url { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public float estimate { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public string current_state { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public string description { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public string name { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public string requested_by { get; set; }
+
+            // FIXME: deprecated field. superseded by owner_ids
+            public string owned_by { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public DateTime accepted_at { get; set; }
         }
 
         [DataContract]
