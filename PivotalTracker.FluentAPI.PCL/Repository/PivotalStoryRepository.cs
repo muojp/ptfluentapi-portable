@@ -164,9 +164,10 @@ namespace PivotalTracker.FluentAPI.Repository
             public List<StoryCreationLabel> labels { get; set; }
         }
 
-        [XmlRoot("note")]
+        [DataContract]
         public class StoryNoteXmlRequest
         {
+            [DataMember]
             public string text { get; set; }
         }
 
@@ -174,9 +175,12 @@ namespace PivotalTracker.FluentAPI.Repository
         public class StoryNoteXmlResponse
         {
             public int id { get; set; }
+            public string kind { get; set; }
+            public int person_id { get; set; }
+            public int story_id { get; set; }
             public string text { get; set; }
-            public string author { get; set; }
-            public DateTime noted_at { get; set; }
+            public DateTime created_at { get; set; }
+            public DateTime updated_at { get; set; }
         }
 
         public class StoryLabelXmlResponse
@@ -251,9 +255,9 @@ namespace PivotalTracker.FluentAPI.Repository
                     lStory.Notes.Add(new Note()
                         {
                             Id = note.id,
-                            Author = note.author,
+                            Author = note.person_id.ToString(),
                             Description = note.text,
-                            NoteDate = note.noted_at
+                            NoteDate = note.created_at
                         });
                 }
             }
@@ -282,9 +286,13 @@ namespace PivotalTracker.FluentAPI.Repository
         
         public async Task<Story> GetStoryAsync(int projectId, int storyId)
         {
-            var path = string.Format("/projects/{0}/stories/{1}", projectId, storyId);
-            var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, null, "GET");
+            var path1 = string.Format("/projects/{0}/stories/{1}", projectId, storyId);
+            var e = await this.RequestPivotalAsync<StoryXmlResponse>(path1, null, "GET");
 
+            var path2 = string.Format("/projects/{0}/stories/{1}/comments", projectId, storyId);
+
+            var notesResp = await this.RequestPivotalAsync<StoryNoteXmlResponse[]>(path2, null, "GET");
+            e.notes = notesResp;
             return PivotalStoryRepository.CreateStory(e);
         }
 
@@ -327,12 +335,12 @@ namespace PivotalTracker.FluentAPI.Repository
                             current_state = story.CurrentState.ToString().ToLowerInvariant(),
                             description = story.Description,                            
                             name = story.Name,
-                            owned_by = story.OwnedBy,
                             story_type = story.Type.ToString().ToLowerInvariant(),
-                            requested_by = story.RequestedBy,                            
                         };
-            if (story.Estimate > 0)
+            if (0 < story.Estimate)
+            {
                 s.estimate = story.Estimate;
+            }
 
             var e = await this.RequestPivotalAsync<StoryXmlResponse>(path, s, "PUT");
             return CreateStory(e);
@@ -341,15 +349,16 @@ namespace PivotalTracker.FluentAPI.Repository
 
         public async Task<Note> AddNoteAsync(int projectId, int storyId, string text)
         {
-            var path = string.Format("/projects/{0}/stories/{1}/notes", projectId, storyId);
-            var noteReq = new Repository.PivotalStoryRepository.StoryNoteXmlRequest { text = text };
+            var path = string.Format("/projects/{0}/stories/{1}/comments", projectId, storyId);
+            var noteReq = new Repository.PivotalStoryRepository.StoryNoteXmlRequest{ text = text };
 
             var noteResp = await this.RequestPivotalAsync<StoryNoteXmlResponse>(path, noteReq, "POST");
+            // FIXME: person_id should be resolved as author name if preserve previous API. Otherwise, change the field type.
             var note = new Note
                            {
-                               Author = noteResp.author,
+                               Author = noteResp.person_id.ToString(),
                                Description = noteResp.text,
-                               NoteDate = noteResp.noted_at,
+                               NoteDate = noteResp.created_at,
                                Id = noteResp.id,
                                StoryId = storyId
                            };
