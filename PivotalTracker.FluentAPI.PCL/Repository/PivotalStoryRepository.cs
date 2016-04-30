@@ -61,6 +61,21 @@ namespace PivotalTracker.FluentAPI.Repository
             [XmlArrayItem("note")]
             public StoryNoteXmlResponse[] notes { get; set; }
 
+            [DataMember]
+            public List<int> owner_ids { get; set; }
+
+            [DataMember]
+            public List<int> label_ids { get; set; }
+
+            [DataMember]
+            public List<int> task_ids { get; set; }
+
+            [DataMember]
+            public List<int> follower_ids { get; set; }
+
+            [DataMember]
+            public List<int> comment_ids { get; set; }
+
             [XmlArray("labels")]
             [XmlArrayItem]
             [DataMember()]
