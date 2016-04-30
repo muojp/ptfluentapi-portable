@@ -3,6 +3,19 @@ Pivotal Tracker FluentAPI is C# API that uses the Fluent pattern to connect to t
 
 ptfluentapi-portable is a portable version of Pivotal Tracker FluentAPI. It has many changes and now PCL version support Pivotal Tracker v5 APIs instead of legacy v3 APIs.
 
+# How to install it?
+
+Preview versions of ptfluentapi-portable are distributed on NuGet: https://www.nuget.org/packages/ptfluentapi-portable/ , so you can install them by running:
+
+```
+Install-Package ptfluentapi-portable -Pre
+```
+# How's the status?
+
+Most API access work just fine but there are some features missing.
+
+Please [file an issue](https://github.com/muojp/ptfluentapi-portable/issues/new) if you find important features missing.
+
 # How to use it ?
 
 First create the Pivotal Tracker Facade
