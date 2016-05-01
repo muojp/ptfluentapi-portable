@@ -21,6 +21,17 @@ namespace PivotalTracker.FluentAPI.Service
 
 
         /// <summary>
+        /// Fetch all memberships on the project.
+        /// </summary>
+        /// <returns>This</returns>
+        public async Task<MembershipsFacade> GetAsync()
+        {
+            var memberships = await _repository.GetAllMembershipsAsync(this.ParentFacade.Item.Id);
+            ParentFacade.Item.PopulateMemberships(memberships.ToList());
+            return this;
+        }
+
+        /// <summary>
         /// Apply an action on the loaded membership list
         /// </summary>
         /// <param name="action">action that accept membeship list</param>
@@ -36,7 +47,7 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="membership">a initialized membership (email is mandatory)</param>
         /// <returns>This</returns>
-        public async Task<MembershipsFacade> Add(Membership membership)
+        public async Task<MembershipsFacade> AddAsync(Membership membership)
         {
 
             membership.ProjectRef.Name = this.ParentFacade.Item.Name;
@@ -51,10 +62,10 @@ namespace PivotalTracker.FluentAPI.Service
         /// </summary>
         /// <param name="creator">factory that accept the project object and create the membership</param>
         /// <returns>This</returns>
-        public async Task<MembershipsFacade> Add(Func<Project, Membership> creator)
+        public async Task<MembershipsFacade> AddAsync(Func<Project, Membership> creator)
         {
             var m = creator(this.ParentFacade.Item);
-            return await Add(m);
+            return await AddAsync(m);
         }
 
         /// <summary>
