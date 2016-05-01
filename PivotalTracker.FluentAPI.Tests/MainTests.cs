@@ -202,7 +202,6 @@ namespace PivotalTracker.FluentAPI.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public async System.Threading.Tasks.Task CreateStoryAsync()
         {
             (await
@@ -501,62 +500,58 @@ namespace PivotalTracker.FluentAPI.Tests
         public async System.Threading.Tasks.Task GetAllMembershipsAsync()
         {
             await
-            (await
-            Pivotal
-                .Projects()
-                    .GetAsync(Project.Id))
-                        .Membership()
-                            .AllAsync(members =>
-                            {
-                                Assert.IsNotNull(members);
-                                Assert.AreEqual(1, members.Count());
-                                Assert.IsNotNull(members.First().Person);
-                                Assert.IsNotNull(members.First().Person.Name);
-                            });
+            (await Pivotal.Projects().GetAsync(Project.Id))
+                .Membership().AllAsync(members =>
+                {
+                    Assert.IsNotNull(members);
+                    Assert.AreEqual(1, members.Count());
+                    var member = members.First();
+                    Assert.IsNotNull(member.Person);
+                    Assert.IsNotNull(member.Person.Name);
+                    Assert.AreNotEqual(Properties.Settings.Default.NewMemberEmail, member.Person.Email);
+                    Assert.AreNotEqual(Properties.Settings.Default.NewMemberName, member.Person.Name);
+                });
         }
 
-        [TestMethod]
         public async System.Threading.Tasks.Task AddMembershipAsync()
         {
             await
-            (await
-            Pivotal
-                .Projects()
-                    .GetAsync(Project.Id))
-                        .Membership()
-                            .Add(p =>
-                            {
-                                var m = new Membership();
-                                m.MembershipRole = MembershipRoleEnum.Member;
-                                m.Person.Name = Properties.Settings.Default.NewMemberName;
-                                m.Person.Email = Properties.Settings.Default.NewMemberEmail;
+            (await Pivotal.Projects().GetAsync(Project.Id))
+                .Membership().AddAsync(p =>
+                {
+                    var m = new Membership();
+                    m.MembershipRole = MembershipRoleEnum.Member;
+                    m.Person.Name = Properties.Settings.Default.NewMemberName;
+                    m.Person.Email = Properties.Settings.Default.NewMemberEmail;
 
-                                return m;
-                            });
+                    return m;
+                });
         }
 
+        /// <summary>
+        /// Due to a Pivotal's server behaviour (doesn't allow adding memberships which already exist),
+        /// we need to unify membership testing.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
-        public async System.Threading.Tasks.Task RemoveMembership()
+        public async System.Threading.Tasks.Task AddAndRemoveMembership()
         {
             await AddMembershipAsync();
 
             await
             (await
             (await
-            Pivotal
-                .Projects()
-                    .GetAsync(Project.Id))
-                        .Membership()
-                            .RemoveAsync(p =>
-                            {
-                                return p.Memberships.Where(m => m.Person.Email == Properties.Settings.Default.NewMemberEmail).First();
-                            }))
-                        .Done()
-                        .Membership()
-                            .AllAsync(members =>
-                            {
-                                Assert.AreEqual(0, members.Where(m => m.Person.Email == Properties.Settings.Default.NewMemberEmail).Count());
-                            });
+            (await Pivotal.Projects().GetAsync(Project.Id))
+                .Membership().GetAsync())
+                    .RemoveAsync(p =>
+                    {
+                        return p.Memberships.Where(m => m.Person.Email == Properties.Settings.Default.NewMemberEmail).First();
+                    }))
+                    .Done()
+                    .Membership().AllAsync(members =>
+                    {
+                        Assert.AreEqual(0, members.Where(m => m.Person.Email == Properties.Settings.Default.NewMemberEmail).Count());
+                    });
         }
 
         async System.Threading.Tasks.Task CreateStoryWithLabelsAsync(bool setLabelsViaArray)
