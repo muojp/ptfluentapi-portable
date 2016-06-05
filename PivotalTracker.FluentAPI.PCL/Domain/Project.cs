@@ -35,5 +35,10 @@ namespace PivotalTracker.FluentAPI.Domain
         public DateTime? LastActivityDate { get; set; }
         public IList<Integration> Integrations { get; private set; }
         public IList<Membership> Memberships { get; private set; }
+
+        public void PopulateMemberships(List<Membership> memberships)
+        {
+            Memberships = memberships;
+        }
     }
 }
